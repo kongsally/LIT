@@ -2,13 +2,14 @@
 <html>
 <head>
 	<link rel="stylesheet" href="css/material.min.css">
-  <script src="js/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/main.css">
-  <script src="js/three.min.js"></script>
+  <script src="js/material.min.js"></script>
   <script src="js/jquery.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script> 
+  <script src="js/tween.min.js"></script>
+  <script src="js/MTLLoader.js"></script>
   <script src="js/OBJLoader.js"></script>
-  <script src="js/MaterialLoader.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/Detector.js"></script>
   <script src="js/main.js"></script>
@@ -16,16 +17,7 @@
 	<title>LIT</title>
 </head>
 
-<style>
-.demo-layout-transparent {
-}
-.demo-layout-transparent .mdl-layout__header {
-  color: black;
-}
-</style>
-
 <body onload="setup();">
-  <div class="container">
     <div class="demo-layout-transparent mdl-layout mdl-js-layout">
       <header class="mdl-layout__header mdl-layout__header--transparent">
         <div class="mdl-layout__header-row">
@@ -33,13 +25,37 @@
           <span class="mdl-layout-title">LIT: Lights in Theatre</span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>
-        </div>
       </header>
       <!-- Light Sim -->
-      <div id="lightSimContainer"></div>
-      <main class="mdl-layout__content">
+       <main class="mdl-layout__content">
+          <div id="lightSimContainer"></div>
+          <div class="controls-wrapper">
+            <button id="toggle_guide_button" class="button-primary" 
+              onClick="toggleLightHelpers();">
+              Toggle Spotlight Guidelines
+            </button>
+            <table class="u-full-width">
+             <tr>
+              <td onClick='toggleLightColor(7)'>Spotlight 7</td>
+              <td onClick='toggleLightColor(8)'>Spotlight 8</td>
+              <td onClick='toggleLightColor(9)'>Spotlight 9</td>
+            </tr>
+            <tr>
+              <td onClick='toggleLightColor(4)'>Spotlight 4</td>
+              <td onClick='toggleLightColor(5)'>Spotlight 5</td>
+              <td onClick='toggleLightColor(6)'>Spotlight 6</td>
+            </tr>
+            <tr>
+              <td onClick='toggleLightColor(1)'>Spotlight 1</td>
+              <td onClick='toggleLightColor(2)'>Spotlight 2</td>
+              <td onClick='toggleLightColor(3)'>Spotlight 3</td>
+            </tr>
+            </table>
+            </div>
+        </div>
       </main>
     </div>
+
   </div>
 </body>
 
