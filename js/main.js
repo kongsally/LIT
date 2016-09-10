@@ -1,8 +1,10 @@
 
-var camera, lightHelper1, renderer, scene, spotLight1;
+var camera, container, lightHelper1, renderer, scene, spotLight1;
 
 function setup() {
-  var WIDTH = window.innerWidth * 0.5,
+
+  container = $('#lightSimContainer');
+  var WIDTH = container.width(),
       HEIGHT = window.innerHeight * 0.8;
 
   // set some camera attributes
@@ -10,8 +12,6 @@ function setup() {
     ASPECT = WIDTH / HEIGHT,
     NEAR = 0.1,
     FAR = 10000;
-
-  var container = $('#lightSimContainer');
 
   // create a WebGL renderer, camera
   // and a scene
@@ -60,6 +60,8 @@ function setup() {
   controls.maxDistance = 499;
 
   renderer.render(scene, camera);
+  onResize();
+  window.addEventListener( 'resize', onResize, false);
   controls.target.set( 0, 7, 0 );
   controls.update();
 }
@@ -100,4 +102,13 @@ function createSpotlight(color) {
 
 function render() {
   renderer.render(scene, camera);
+}
+
+function onResize() {
+  var WIDTH = container.width(),
+      HEIGHT =  window.innerHeight * 0.8;
+  camera.aspect = WIDTH/HEIGHT;
+  camera.updateProjectionMatrix();
+  renderer.setSize(WIDTH, HEIGHT);
+  render();
 }
