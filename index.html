@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/skeleton.css">
+	<link rel="stylesheet" href="css/material.min.css">
+  <script src="js/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/three.min.js"></script>
   <script src="js/jquery.js"></script>
@@ -15,16 +16,29 @@
 	<title>LIT</title>
 </head>
 
+<style>
+.demo-layout-transparent {
+}
+.demo-layout-transparent .mdl-layout__header {
+  color: black;
+}
+</style>
+
 <body onload="setup();">
   <div class="container">
-    <h1> LIT: Lights in Theatre </h1>
-    <div class="row">
-        <div class="seven columns">
-          <div id="lightSimContainer"></div>
+    <div class="demo-layout-transparent mdl-layout mdl-js-layout">
+      <header class="mdl-layout__header mdl-layout__header--transparent">
+        <div class="mdl-layout__header-row">
+          <!-- Title -->
+          <span class="mdl-layout-title">LIT: Lights in Theatre</span>
+          <!-- Add spacer, to align navigation to the right -->
+          <div class="mdl-layout-spacer"></div>
         </div>
-        <div class="five columns">
-          <p>Here be spotlight controls</p>
-        </div>
+      </header>
+      <!-- Light Sim -->
+      <div id="lightSimContainer"></div>
+      <main class="mdl-layout__content">
+      </main>
     </div>
   </div>
 </body>
