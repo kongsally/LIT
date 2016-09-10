@@ -4,10 +4,11 @@
 	<link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
   <link rel="stylesheet" href="css/main.css">
-  <script src="js/three.min.js"></script>
   <script src="js/jquery.js"></script>
+  <script src="js/three.min.js"></script>
+  <script src="js/tween.min.js"></script>
+  <script src="js/MTLLoader.js"></script>
   <script src="js/OBJLoader.js"></script>
-  <script src="js/MaterialLoader.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/Detector.js"></script>
   <script src="js/main.js"></script>
@@ -17,15 +18,38 @@
 
 <body onload="setup();">
   <div class="container">
-    <h1> LIT: Lights in Theatre </h1>
+    <h4>L I T : Lights in Theatre</h4>
     <div class="row">
-        <div class="seven columns">
+        <div class="eight columns">
           <div id="lightSimContainer"></div>
         </div>
-        <div class="five columns">
-          <p>Here be spotlight controls</p>
+        <div class="four columns">
+          <div class="controls-wrapper">
+            <button id="toggle_guide_button" class="button-primary" 
+              onClick="toggleLightHelpers();">
+              Toggle Spotlight Guidelines
+            </button>
+            <table class="u-full-width">
+             <tr>
+              <td onClick='toggleLightColor(7)'>Spotlight 7</td>
+              <td onClick='toggleLightColor(8)'>Spotlight 8</td>
+              <td onClick='toggleLightColor(9)'>Spotlight 9</td>
+            </tr>
+            <tr>
+              <td onClick='toggleLightColor(4)'>Spotlight 4</td>
+              <td onClick='toggleLightColor(5)'>Spotlight 5</td>
+              <td onClick='toggleLightColor(6)'>Spotlight 6</td>
+            </tr>
+            <tr>
+              <td onClick='toggleLightColor(1)'>Spotlight 1</td>
+              <td onClick='toggleLightColor(2)'>Spotlight 2</td>
+              <td onClick='toggleLightColor(3)'>Spotlight 3</td>
+            </tr>
+            </table>
+            </div>
         </div>
     </div>
+
   </div>
 </body>
 
