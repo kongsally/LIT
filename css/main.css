@@ -40,12 +40,13 @@ i {
 	color: #fff;
 }
 
+
 .mdl-slider.is-upgraded {
 	background: rgb(205, 220, 57);
 	color: rgb(205, 220, 57);
 }
 
-td i:hover {
+i:hover {
 	cursor:pointer;
 }
 
@@ -65,6 +66,10 @@ td i:hover {
 	margin-bottom: 1em;
 }
 
-#lightSlider{
-	width:300px;
+#lightSlider {
+	width: 100%;
+}
+
+#switchWrapper {
+
 }
