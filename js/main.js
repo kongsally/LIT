@@ -1,7 +1,13 @@
 
 var camera, container, lightHelper1, obj, renderer, scene, spotLight1;
 var spotlights, lightHelpers;
+var hexNumbers = [];
 var isLightHelperOn = true;
+var isPickingColor = false;
+
+var selectedSpotlightIndex;
+var originalColor;
+var selectedColor;
 
 function setup() {
 
@@ -105,10 +111,9 @@ function setup() {
   container.append(renderer.domElement);
 
  $.getJSON("LEE_Color.json", function( data ) { 
-    for (var i=0; i < data.length(); i++) {
-      data[i]["hex"]
+    for (var i=0; i < Object.keys(data).length; i++) {
+      hexNumbers.push(data[i]["hex"]);
     }
-  }
 });
 
   //Create sliders for spotlights
@@ -116,6 +121,10 @@ function setup() {
 
   window.addEventListener('resize', onResize, false);
   onResize();
+
+  populateColorPickers();
+  $("#color-picker-card").hide();
+  toggleLightHelpers();
 }
 
 function putSphere(pos) {
@@ -144,7 +153,7 @@ function putSphere(pos) {
 }
 
 function createSpotlight(color) {
-  var newObj = new THREE.SpotLight(color, 0.8);
+  var newObj = new THREE.SpotLight(color, 1);
   newObj.castShadow = true;
   newObj.angle = 0.645; 
   newObj.penumbra = 0.2;
@@ -179,26 +188,75 @@ function toggleLightHelpers() {
 function populateSlideBars() {
   for (var i = 1; i < 10; i++) {
     $( "#spotlight" + i).append("<input class='mdl-slider " +
-      "mdl-js-slider' type='range' id='s" + i + "' min='0' max='100' value='100'" + 
-    " oninput='adjustLightIntensity(" + i + ", this.value)' " +
-    "onchange='adjustLightIntensity(" +
-    i + ", this.value)'>");
+      "mdl-js-slider is-upgraded' type='range' id='s" + i + 
+      "' min='0' max='100' value='100' " + 
+      "oninput='adjustLightIntensity(" + i + ", this.value)' " +
+      "onchange='adjustLightIntensity(" + i + ", this.value)'>");
+  }
+}
+
+// create a color picker palette for each of the spotlights
+function populateColorPickers() {
+  for (var i = 1; i < 10; i++) {
+    $( "#spotlight" + i).prepend("<i id='palette" + i + 
+      "' class='material-icons' onClick='openSpotlightControl(" + i + ")'>palette</i>");
   }
 }
 
 // allows slide bar to adjust light intensity
 function adjustLightIntensity(i, value) {
-   lightIntensity = value;
+  lightIntensity = value;
   spotlights[i-1].intensity = lightIntensity/100;
   render();
 }
 
+function openSpotlightControl(i) {
+  selectedSpotlightIndex = i;
+  $("#spotlight-grid").hide();
+  $("#color-picker-card").show();
+  originalColor = new THREE.Color(spotlights[i-1].color);
+  console.log("original color");
+  console.log(originalColor);
+  toggleLightColor(i);
+}
+
+function hideSpotlightControl() {
+  if(!isPickingColor) {
+    console.log("hide, original");
+      console.log(originalColor);
+    selectedColor = originalColor;
+    setSpotLightColor();
+  }
+  $("#spotlight-grid").show();
+  $("#color-picker-card").hide();
+  isPickingColor = false;
+}
+
 function toggleLightColor(i) {
-  var newColor = new THREE.Color(
-    Math.random() * 1.5, Math.random() * 1.5, Math.random());
-  spotlights[i-1].color.set(newColor);
-  lightHelpers[i-1].children[0].material.color.set(newColor);
+  selectedColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+  $("#color-swatch-wrapper").empty();
+  $("#color-swatch-wrapper").append("<div id='color-swatch1'" + 
+    "onClick='toggleLightColor(" + i + ");'" + ">New Color</div>");
+  $("#color-swatch1").css("background-color", "#" + selectedColor.getHexString());
+
+  changeSpotLightColor();
+}
+
+function changeSpotLightColor() {
+  spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
+  lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
   render();
+}
+
+function setSpotLightColor() {
+  console.log("new color");
+  console.log(selectedColor);
+  spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
+  $("#palette" + selectedSpotlightIndex).css("color", "#" + selectedColor.getHexString());
+  lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
+  render();
+  isPickingColor = true;
+  hideSpotlightControl();
 }
 
 

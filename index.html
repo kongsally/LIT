@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<link rel="stylesheet" href="css/material.min.css">
+  <link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/material.lime-indigo.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/material.min.js"></script>
@@ -20,47 +21,80 @@
 <body onload="setup();">
     <div class="demo-layout-transparent mdl-layout mdl-js-layout">
       <header class="mdl-layout__header mdl-layout__header--transparent">
-        <div class="mdl-layout__header-row">
-          <!-- Title -->
-          <span class="mdl-layout-title">LIT: Lights in Theatre</span>
-          <!-- Add spacer, to align navigation to the right -->
-          <div class="mdl-layout-spacer"></div>
+        <span class="mdl-layout-title">LIT: Lights in Theatre</span>
       </header>
-      <!-- Light Sim -->
+    
        <main class="mdl-layout__content">
-          <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--8-col">
-              <div id="lightSimContainer"></div>
-            </div>
-            <div class="mdl-cell mdl-cell--4-col">
-              <div class="controls-wrapper">
-                <button id="toggle_guide_button" class="button-primary" 
-                  onClick="toggleLightHelpers();">
-                  Toggle Spotlight Guidelines
-                </button>
-                <table class="u-full-width">
-                 <tr>
-                  <td id='spotlight7' onClick='toggleLightColor(7)'>Spotlight 7</td>
-                  <td id='spotlight8' onClick='toggleLightColor(8)'>Spotlight 8</td>
-                  <td id='spotlight9' onClick='toggleLightColor(9)'>Spotlight 9</td>
-                </tr>
-                <tr>
-                  <td id='spotlight4' onClick='toggleLightColor(4)'>Spotlight 4</td>
-                  <td id='spotlight5' onClick='toggleLightColor(5)'>Spotlight 5</td>
-                  <td id='spotlight6' onClick='toggleLightColor(6)'>Spotlight 6</td>
-                </tr>
-                <tr>
-                  <td id='spotlight1' onClick='toggleLightColor(1)'>Spotlight 1</td>
-                  <td id='spotlight2' onClick='toggleLightColor(2)'>Spotlight 2</td>
-                  <td id='spotlight3' onClick='toggleLightColor(3)'>Spotlight 3</td>
-                </tr>
+        <div class="mdl-grid">
+          <div class="mdl-cell mdl-cell--6-col">
+            <div id="lightSimContainer"></div>
+          </div>
+          <div class="mdl-cell mdl-cell--6-col">
+            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" 
+                  for="guideline-switch">
+                  <input type="checkbox" id="guideline-switch" class="mdl-switch__input" 
+                        onClick="toggleLightHelpers();">
+                  <span class="mdl-switch__label">
+                    Spotlight Guidlines On/Off
+                  </span>
+              </label>
+            <div class="mdl-grid">
+              <div class="mdl-cell mdl-cell--12-col">
+                <table id="spotlight-grid">
+                  <tr>
+                    <td id="spotlight7">
+                      <span>Spotlight 7</span>
+                    </td>
+                    <td id="spotlight8">
+                      <span>Spotlight 8</span>
+                    </td>
+                    <td id="spotlight9">
+                      <span>Spotlight 9</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="spotlight4">
+                      <span>Spotlight 4</span>
+                    </td>
+                    <td id="spotlight5">
+                      <span>Spotlight 5</span>
+                    </td>
+                    <td id="spotlight6">
+                      <span>Spotlight 6</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="spotlight1">
+                     <span>Spotlight 1</span>
+                     </td>
+                    <td id="spotlight2">
+                      <span>Spotlight 2</span>
+                      </td>
+                    <td id="spotlight3">
+                      <span>Spotlight 3</span>
+                    </td>
+                  </tr>
                 </table>
+            </div>
+
+            <div id="color-picker-card" class="mdl-cell mdl-cell--12-col">
+              <div class="demo-card-square mdl-card mdl-shadow--4dp">
+                <div class="mdl-card__title mdl-card--expand">
+                  <h2 class="mdl-card__title-text">Pick Filter Color</h2>
+                </div>
+                <div id="color-swatch-wrapper" class="mdl-card__supporting-text">
+                  <p>here be color swatches</p>
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='setSpotLightColor();'>OK</a>
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='hideSpotlightControl();'>Cancel</a>
+                </div>
               </div>
             </div>
           </div>
+         </div>
+        </div>
       </main>
-    </div>
-
   </div>
 </body>
 
