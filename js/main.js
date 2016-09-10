@@ -123,6 +123,8 @@ function setup() {
   onResize();
 
   populateColorPickers();
+  populateSlideBars();
+  
   $("#color-picker-card").hide();
   toggleLightHelpers();
 }
@@ -198,8 +200,11 @@ function populateSlideBars() {
 // create a color picker palette for each of the spotlights
 function populateColorPickers() {
   for (var i = 1; i < 10; i++) {
-    $( "#spotlight" + i).prepend("<i id='palette" + i + 
+    $( "#spotlight" + i).append("<i id='palette" + i + 
       "' class='material-icons' onClick='openSpotlightControl(" + i + ")'>palette</i>");
+    $( "#spotlight" + i).append("<span> Spotlight " + i + " <span id='intensity" + 
+      i + "'></span>");
+    updateIntensityLabel(i);
   }
 }
 
@@ -207,6 +212,7 @@ function populateColorPickers() {
 function adjustLightIntensity(i, value) {
   lightIntensity = value;
   spotlights[i-1].intensity = lightIntensity/100;
+  updateIntensityLabel(i);
   render();
 }
 
@@ -259,4 +265,7 @@ function setSpotLightColor() {
   hideSpotlightControl();
 }
 
+function updateIntensityLabel(i) {
+  $("#intensity" + i).html("(" + parseInt(spotlights[i-1].intensity * 100) + "%)");
+}
 
