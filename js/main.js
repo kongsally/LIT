@@ -104,6 +104,8 @@ function setup() {
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
+  populateSlideBars();
+
   window.addEventListener('resize', onResize, false);
   onResize();
 }
@@ -162,6 +164,24 @@ function toggleLightHelpers() {
   });
   $( "#toggle_guide_button" ).toggleClass(
     "button-primary", isLightHelperOn == true);
+  render();
+}
+
+// create a slide bar for each of the spotlights
+function populateSlideBars() {
+  for (var i = 1; i < 10; i++) {
+    $( "#spotlight" + i).append("<input class='mdl-slider " +
+      "mdl-js-slider' type='range' id='s" + i + "' min='0' max='100' value='100'" + 
+    " oninput='adjustLightIntensity(" + i + ", this.value)' " +
+    "onchange='adjustLightIntensity(" +
+    i + ", this.value)'>");
+  }
+}
+
+// allows slide bar to adjust light intensity
+function adjustLightIntensity(i, value) {
+   lightIntensity = value;
+  spotlights[i-1].intensity = lightIntensity/100;
   render();
 }
 

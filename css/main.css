@@ -41,3 +41,7 @@ td:hover {
 .demo-layout-transparent .mdl-layout__header {
   color: black;
 }
+
+#lightSlider{
+	width:300px;
+}
