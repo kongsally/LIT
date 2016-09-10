@@ -28,31 +28,36 @@
       </header>
       <!-- Light Sim -->
        <main class="mdl-layout__content">
-          <div id="lightSimContainer"></div>
-          <div class="controls-wrapper">
-            <button id="toggle_guide_button" class="button-primary" 
-              onClick="toggleLightHelpers();">
-              Toggle Spotlight Guidelines
-            </button>
-            <table class="u-full-width">
-             <tr>
-              <td onClick='toggleLightColor(7)'>Spotlight 7</td>
-              <td onClick='toggleLightColor(8)'>Spotlight 8</td>
-              <td onClick='toggleLightColor(9)'>Spotlight 9</td>
-            </tr>
-            <tr>
-              <td onClick='toggleLightColor(4)'>Spotlight 4</td>
-              <td onClick='toggleLightColor(5)'>Spotlight 5</td>
-              <td onClick='toggleLightColor(6)'>Spotlight 6</td>
-            </tr>
-            <tr>
-              <td onClick='toggleLightColor(1)'>Spotlight 1</td>
-              <td onClick='toggleLightColor(2)'>Spotlight 2</td>
-              <td onClick='toggleLightColor(3)'>Spotlight 3</td>
-            </tr>
-            </table>
+          <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--8-col">
+              <div id="lightSimContainer"></div>
             </div>
-        </div>
+            <div class="mdl-cell mdl-cell--4-col">
+              <div class="controls-wrapper">
+                <button id="toggle_guide_button" class="button-primary" 
+                  onClick="toggleLightHelpers();">
+                  Toggle Spotlight Guidelines
+                </button>
+                <table class="u-full-width">
+                 <tr>
+                  <td onClick='toggleLightColor(7)'>Spotlight 7</td>
+                  <td onClick='toggleLightColor(8)'>Spotlight 8</td>
+                  <td onClick='toggleLightColor(9)'>Spotlight 9</td>
+                </tr>
+                <tr>
+                  <td onClick='toggleLightColor(4)'>Spotlight 4</td>
+                  <td onClick='toggleLightColor(5)'>Spotlight 5</td>
+                  <td onClick='toggleLightColor(6)'>Spotlight 6</td>
+                </tr>
+                <tr>
+                  <td onClick='toggleLightColor(1)'>Spotlight 1</td>
+                  <td onClick='toggleLightColor(2)'>Spotlight 2</td>
+                  <td onClick='toggleLightColor(3)'>Spotlight 3</td>
+                </tr>
+                </table>
+              </div>
+            </div>
+          </div>
       </main>
     </div>
 
