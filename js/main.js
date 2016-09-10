@@ -166,9 +166,13 @@ function toggleLightHelpers() {
 }
 
 function toggleLightColor(i) {
-  var newColor = new THREE.Color(
-    Math.random() * 1.5, Math.random() * 1.5, Math.random());
+  var newColor = new THREE.Color(Math.random() * 1.5, Math.random() * 1.5, Math.random());
+  setSpotLightColor(i, newColor);
+}
+
+function setSpotLightColor(i, newColor) {
   spotlights[i-1].color.set(newColor);
+  $("#palette" + i).css("color", "#" + newColor.getHexString());
   lightHelpers[i-1].children[0].material.color.set(newColor);
   render();
 }

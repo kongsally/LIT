@@ -22,7 +22,7 @@ td {
 	text-align: center;
 }
 
-td:hover {
+td span:hover {
 	cursor:pointer;
 	color:#33C3F0;
 }
