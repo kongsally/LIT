@@ -104,6 +104,14 @@ function setup() {
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
+ $.getJSON("LEE_Color.json", function( data ) { 
+    for (var i=0; i < data.length(); i++) {
+      data[i]["hex"]
+    }
+  }
+});
+
+  //Create sliders for spotlights
   populateSlideBars();
 
   window.addEventListener('resize', onResize, false);
@@ -192,3 +200,5 @@ function toggleLightColor(i) {
   lightHelpers[i-1].children[0].material.color.set(newColor);
   render();
 }
+
+
