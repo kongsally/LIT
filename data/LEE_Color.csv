@@ -1,0 +1,358 @@
+#FF78DC,002,Rose Pink
+#FAF0FA,003,Lavender Tint
+#FFC8B4,004,Medium Bastard Amber
+#FAFAD2,007,Pale Yellow
+#FC9B80,008,Dark Salmon
+#FCD7B3,009,Pale Amber Gold
+#FFFF00,010,Medium Yellow
+#FCD89B,013,Straw Tint
+#FFCD00,015,Deep Straw
+#E68C64,017,Surprise Peach
+#FF4600,019,Fire
+#FFBE55,020,Medium Amber
+#FF8C32,021,Gold Amber
+#FF6900,022,Dark Amber
+#FF5A64,024,Scarlet
+#FF6E46,025,Sunset Red
+#E6003C,026,Bright Red
+#C8003C,027,Medium Red
+#E1003C,029,Plasa Red
+#FFC8D2,035,Light Pink
+#FFA0B9,036,Medium Pink
+#DC005A,046,Dark Magenta
+#E66EAF,048,Rose Purple
+#BE0091,049,Medium Purple
+#E6AAFA,052,Light Lavender
+#E6E6FA,053,Paler Lavender
+#B46EF0,058,Lavender
+#DCF5FF,061,Mist Blue
+#D2F5FF,063,Pale Blue
+#46B4F0,068,Sky Blue
+#0000B4,071,Tokyo Blue
+#64A0F0,075,Evening Blue
+#3C8CD2,079,Just Blue
+#006EB9,085,Deeper Blue
+#DCFF64,088,Lime Green
+#5ADC5A,089,Moss Green
+#00BE00,090,Dark Yellow Green
+#F5FF00,100,Spring Yellow
+#FFF500,101,Yellow
+#FFDC5F,102,Light Amber
+#FCEACC,103,Straw
+#FFDC00,104,Deep Amber
+#FFA000,105,Orange
+#F00032,106,Primary Red
+#FFA5AF,107,Light Rose
+#FCBEA9,108,English Rose
+#FFB2AF,109,Light Salmon
+#FFB4C8,110,Middle Rose
+#FF8CBE,111,Dark Pink
+#FF0064,113,Magenta
+#00EBC8,115,Peacock Blue
+#00C8B9,116,Medium Blue-Green
+#B4FAF5,117,Steel Blue
+#00E1EB,118,Light Blue
+#0078C8,119,Dark Blue
+#005FBE,120,Deep Blue
+#B4FF64,121,LEE Green
+#78FA6E,122,Fern Green
+#00DC78,124,Dark Green
+#BE009B,126,Mauve
+#E16273,127,Smokey Pink
+#FF50B4,128,Bright Pink
+#FFFFFF,129,Heavy Frost
+#FFFFFF,130,Clear
+#64FAD2,131,Marine Blue
+#00A0DC,132,Medium Blue
+#FAA873,134,Golden Amber
+#FF5F00,135,Deep Golden Amber
+#F0BEE6,136,Pale Lavender
+#C8B4E6,137,Special Lavender
+#DCFFA0,138,Pale Green
+#4BC300,139,Primary Green
+#87F0EB,140,Summer Blue
+#00D2E6,141,Bright Blue
+#AAAAF0,142,Pale Violet
+#64BED2,143,Pale Navy Blue
+#5AE1E6,144,No Colour Blue
+#FCB98C,147,Apricot
+#FF507D,148,Bright Rose
+#FFCDC3,151,Gold Tint
+#FFD2C1,152,Pale Gold
+#FFC8C8,153,Pale Salmon
+#FFD5CF,154,Pale Rose
+#E1B48C,156,Chocolate
+#FF92A3,157,Pink
+#FF8700,158,Deep Orange
+#FFFAEB,159,No Colour Straw
+#7DD2F5,161,Slate Blue
+#FCDED8,162,Bastard Amber
+#FF3200,164,Flame Red
+#5AC8EB,165,Daylight Blue
+#FADCF0,169,Lilac Tint
+#E6AADC,170,Deep Lavender
+#00DCDC,172,Lagoon Blue
+#AFE1FA,174,Dark Steel Blue
+#FFAAA0,176,Loving Amber
+#FFBE00,179,Chrome Orange
+#A064E6,180,Dark Lavender
+#5000AA,181,Congo Blue
+#F50000,182,Light Red
+#00D7E3,183,Moonlight Blue
+#F0E1D7,184,Cosmetic Peach
+#F8DCDD,186,Cosmetic Silver Rose
+#F5E4D7,187,Cosmetic Rouge
+#FFEBD7,188,Cosmetic Highlight
+#EEEDD8,189,Cosmetic Silver Moss
+#E9EEEE,191,Cosmetic Aqua Blue
+#FF8CB4,192,Flesh Pink
+#BE8CF0,194,Surprise Pink
+#006ED2,195,Zenith Blue
+#78D2E6,196,True Blue
+#82AAE6,197,Alice Blue
+#6478C8,198,Palace Blue
+#6464E6,199,Regal Blue
+#91BEF5,200,Double C.T. Blue
+#C3E1FA,201,Full C.T. Blue
+#D7F0FF,202,Half C.T. Blue
+#EBFCFF,203,Quarter C.T. Blue
+#FAC387,204,Full C.T. Orange
+#FCD9B1,205,Half C.T. Orange
+#FCEAD6,206,Quarter C.T. Orange
+#F0B46B,207,Full C.T. Orange + .3 ND
+#E6A550,208,Full C.T. Orange + .6 ND
+#C8C8C8,209,0.3 ND
+#A5A5A5,210,0.6 ND
+#828282,211,0.9 ND
+#FFFAD7,212,L.C.T.Yellow (Y1)
+#E6FCDC,213,White Flame Green
+#FFFFFF,214,Full Tough Spun
+#FFFFFF,215,Half Tough Spun
+#FFFFFF,216,White Diffusion
+#F5FFFF,217,Blue Diffusion
+#F5FFFF,218,Eighth C.T. Blue
+#9BDCAF,219,LEE Fluorescent Green
+#FFFFFF,220,White Frost
+#F5FFFF,221,Blue Frost
+#FFF3E8,223,Eighth C.T. Orange
+#96A0BE,224,Daylight Blue Frost
+#9EA0A2,225,Neutral Density Frost
+#FFFFFA,226,LEE U.V.
+#FFFFFF,228,Brushed Silk
+#FFFFFF,229,Quarter Tough Spun
+#DCBE8C,230,Super Correction L.C.T. Yellow
+#EDBE83,232,Super Correction W.F. Green
+#FAC795,236,H.M.I. (to Tungsten)
+#FCB292,237,C.I.D. (to Tungsten)
+#F5B9AA,238,C.S.I. (to Tungsten)
+#CDCDCD,239,Polariser
+#AADCC3,241,LEE Fluorescent 5700 Kelvin
+#B9E6B9,242,LEE Fluorescent 4300 Kelvin
+#CDF5AF,243,LEE Fluorescent 3600 Kelvin
+#E6FABE,244,LEE Plus Green
+#F0FCD2,245,Half Plus Green
+#F5FFE6,246,Quarter Plus Green
+#FAC3D7,247,LEE Minus Green
+#FFE2E4,248,Half Minus Green
+#FFECF0,249,Quarter Minus Green
+#FFFFFF,250,Half White Diffusion
+#FFFFFF,251,Quarter White Diffusion
+#FFFFFF,252,Eighth White Diffusion
+#FFFFFF,253,Hampshire Frost
+#FFFFFF,254,New Hampshire Frost
+#FFFFFF,255,Hollywood Frost
+#FFFFFF,256,Half Hampshire Frost
+#FFFFFF,257,Quarter Hampshire Frost
+#FFFFFF,258,Eighth Hampshire Frost
+#FFFFFF,261,Tough Spun FR - Full
+#FFFFFF,262,Tough Spun FR - 3/4
+#FFFFFF,263,Tough Spun FR - 1/2
+#FFFFFF,264,Tough Spun FR - 3/8
+#FFFFFF,265,Tough Spun FR - 1/4
+#FFFFFF,269,LEE Heat Shield
+#BEBEBE,270,LEE Scrim
+#F0F0F0,271,Mirror Silver
+#F0DC96,272,Soft Gold Reflector
+#F3F3F3,273,Soft Silver Reflector
+#EBD791,274,Mirror Gold
+#BEBEBE,275,Black Scrim
+#F3FFF3,278,Eighth Plus Green
+#FFF3F7,279,Eighth Minus Green
+#000000,280,Black Foil
+#CDE6FA,281,Three Quarter C.T. Blue
+#AFD9F5,283,One and a Half C.T. Blue
+#FCCD94,285,Three Quarter C.T. Orange
+#FFB464,286,One and a Half C.T. Orange
+#FFA055,287,Double C.T. Orange
+#E6E6E6,298,0.15 ND
+#5F5F5F,299,1.2 ND
+#41F5BE,322,Soft Green
+#00E1AA,323,Jade
+#008C50,327,Forest Green
+#FF64C8,328,Follies Pink
+#FF3787,332,Special Rose Pink
+#8C00D2,343,Special Medium Lavender
+#CD6ED7,345,Fuchsia Pink
+#5AC8E1,352,Glacier Blue
+#61E8E3,353,Lighter Blue
+#00F0D7,354,Special Steel Blue
+#006EC3,363,Special Medium Blue
+#AAD2F0,366,Cornflower
+#FFFFFF,400,LEELux
+#FFFFFF,402,Soft Frost
+#FFFFFF,404,Half Soft Frost
+#FFFFFF,410,Opal Frost
+#FFFFFF,414,Highlight
+#FFFFFF,416,Three Quarter White Diffusion
+#FFFFFF,420,Light Opal Frost
+#FFFFFF,429,Quiet Frost
+#FFFFFF,430,Grid Cloth
+#FFFFFF,432,Light Grid Cloth
+#FFFFFF,434,Quarter Grid Cloth
+#FFFFFF,439,Heavy Quiet Frost
+#FAC084,441,Full C.T. Straw
+#FCDCAD,442,Half C.T. Straw
+#FCEFDB,443,Quarter C.T. Straw
+#FAF3E8,444,Eighth C.T. Straw
+#FFFFFF,450,Three Eighth White Diffusion
+#FFFFFF,452,Sixteenth White Diffusion
+#FFFFFF,460,Quiet Grid Cloth
+#FFFFFF,462,Quiet Light Grid Cloth
+#FFFFFF,464,Quiet Quarter Grid Cloth
+#B4D2FF,500,Double New Colour Blue
+#D7EBFA,501,New Colour Blue (Robertson Blue)
+#E1F0FF,502,Half New Colour Blue
+#F4FAFF,503,Quarter New Colour Blue
+#D2F5DC,504,Waterfront Green
+#E3FF5A,505,Sally Green
+#FFDACE,506,Marlene
+#F85000,507,Madge
+#5A46C3,508,Midnight Maya
+#963C00,511,Bacon Brown
+#cc6100,512,Amber Delight
+#f5ff7d,513,Ice and a Slice
+#f5ff5a,514,Double G&T;
+#8EB4FA,525,Argent Blue
+#e3ca3c,550,ALD Gold
+#98a8aa,600,Arctic White
+#90a0a0,601,Silver
+#a5a5aa,602,Platinum
+#c8cdcd,603,Moonlight White
+#FFC295,604,Full C.T. Eight Five
+#968200,642,Half Mustard Yellow
+#B4A000,643,Quarter Mustard Yellow
+#C8A862,650,Industry Sodium
+#FF9B5F,651,HI Sodium
+#FF8246,652,Urban Sodium
+#965500,653,LO Sodium
+#7D00CD,700,Perfect Lavender
+#B45ADC,701,Provence
+#E6D2F0,702,Special Pale Lavender
+#D282DC,703,Cold Lavender
+#F0AAFA,704,Lily
+#F0AAFA,705,Lily Frost
+#6E46C8,706,King Fals Lavender
+#6400B4,707,Ultimate Violet
+#DCEBFA,708,Cool Lavender
+#C8C8FA,709,Electric Lilac
+#8CA0F0,710,Spir Special Blue
+#AABEDC,711,Cold Blue
+#A0BEF0,712,Bedford Blue
+#003CA0,713,J.Winter Blue
+#5A91D2,714,Elysian Blue
+#3C6EDC,715,Cabana Blue
+#0064D2,716,Mikkel Blue
+#C3E1FA,717,Shanklin Frost
+#D4EDFA,718,Half Shanklin Frost
+#9BC3F0,719,Colour Wash Blue
+#C3E1FA,720,Durham Daylight Frost
+#0082E6,721,Berry Blue
+#008CD2,722,Bray Blue
+#5082DC,723,Virgin Blue
+#69E1EB,724,Ocean Blue
+#BEF2F3,725,Old Steel Blue
+#00A5B4,727,QFD Blue
+#C8EBD2,728,Steel Green
+#00AFAA,729,Scuba Blue
+#DCFFE6,730,Liberty Green
+#E1FAD7,731,Dirty Ice
+#EBF7CF,733,Damp Squib
+#00BE78,735,Velvet Green
+#00AA00,736,Twickenham Green
+#AAFF00,738,JAS Green
+#5A6E00,740,Aurora Borealis Green
+#826400,741,Mustard Yellow
+#E19B50,742,Bram Brown
+#F8C882,744,Dirty White
+#6E3C00,746,Brown
+#F5B99F,747,Easy White
+#E96785,748,Seedy Pink
+#FCD3CD,749,Hampshire Rose
+#FAF1FE,750,Durham Frost
+#FCF0D2,763,Wheat
+#FCE6B4,764,Sun Colour Straw
+#FFE591,765,LEE Yellow
+#FFE600,767,Oklahoma Yellow
+#FFC600,768,Egg Yolk Yellow
+#FFB400,770,Burnt Yellow
+#FCC5B2,773,Cardbox Amber
+#FCD2BE,774,Soft Amber Key 1
+#FCC6A5,775,Soft Amber Key 2
+#FCBE9B,776,Nectarine
+#F58200,777,Rust
+#FF7600,778,Millennium Gold
+#FC9885,779,Bastard Pink
+#FF6F00,780,AS Golden Amber
+#FF5000,781,Terry Red
+#B9003C,787,Marius Red
+#AA3C32,789,Blood Red
+#FFB4A5,790,Moroccan Pink
+#F5B9AA,791,Moroccan Frost
+#FF3CA0,793,Vanity Fair
+#FFAFDC,794,Pretty 'n Pink
+#FA46C8,795,Magical Magenta
+#AF0096,797,Deep Purple
+#A000BE,798,Chrysalis Pink
+#3C00B4,799,Special KH Lavender
+#ff9600,CL104,Cool LED Deep Amber
+#ff6e00,CL105,Cool LED Orange
+#be0032,CL106,Cool LED Primary Red
+#c80050,CL113,Cool LED Magenta
+#00ffa0,CL115,Cool LED Peacock Blue
+#00aa82,CL116,Cool LED Medium Blue-Green
+#ebffa0,CL117,Cool LED Steel Blue
+#00f5b4,CL118,Cool LED Light Blue
+#0091a5,CL119,Cool LED Dark Blue
+#af0050,CL126,Cool LED Mauve
+#ff0069,CL128,Cool LED Bright Pink
+#00c8c8,CL132,Cool LED Medium Blue
+#4bc300,CL139,Cool LED Primary Green
+#ff7d46,CL147,Cool LED Apricot
+#ff6900,CL158,Cool LED Deep Orange
+#ff0000,CL164,Cool LED Flame Red
+#eb78a0,CL180,Cool LED Dark Lavender
+#960078,CL181,Cool LED Congo Blue
+#dc0052,CL182,Cool LED Light Red
+#FFFFFF,414P,Perforated Highlight
+#FFFFFF,439P,Perforated Heavy Quiet Frost
+#FAD7AF,A205,Half C.T.O. Acrylic Panel
+#F3B76E,A207,Full C.T.O. + 0.3 ND Acrylic Panel
+#E7A651,A208,Full C.T.O. + 0.6 ND Acrylic Panel
+#CDCDCD,A209,0.3 ND Acrylic Panel
+#AAAAAA,A210,0.6 ND Acrylic Panel
+#878787,A211,0.9 ND Acrylic Panel
+#FACDD7,801,Zircon Minus Green 1
+#FAE7EA,802,Zircon Minus Green 2
+#FCF2FA,803,Zircon Minus Green 3
+#FCF7FC,804,Zircon Minus Green 4
+#FCFAFC,805,Zircon Minus Green 5
+#FFAA6E,806,Zircon Warm Amber 2
+#FFD291,807,Zircon Warm Amber 4
+#FFE4AA,808,Zircon Warm Amber 6
+#FFEBB4,809,Zircon Warm Amber 8
+#FFFFFF,810,Zircon Diffusion 1
+#FFFFFF,811,Zircon Diffusion 2
+#FFFFFF,812,Zircon Diffusion 3
+#ebfaeb,SC15,Special Cyan 15
+#cdfae1,SC30,Special Cyan 30
+#aaf7cd,SC60,Special Cyan 60
