@@ -367,7 +367,6 @@ function loadCues() {
 }
 
 function loadConfiguration(i) {
-  console.log('why');
   if (i < savedCues.length) {
     var cueConfiguration = savedCues[i];
     camera.position.set(

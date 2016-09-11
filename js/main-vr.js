@@ -116,7 +116,7 @@ function setup() {
  spotlights = [];
  lightHelpers = [];
  var spotlight_spacing = 180;
- var spotlight_height = 120;
+ var spotlight_height = 200;
 
  for (var i=0; i < 9; i++) {
   var spotlight = createSpotlight(0XFFFFFF);
@@ -128,17 +128,9 @@ function setup() {
 
   spotlights.push(spotlight);
   scene.add(spotlights[i]);
-
-  spotlights[i].target.position.set(
-    -0.5 * (i%3*spotlight_spacing - spotlight_spacing), 
-    0, 
-    0.5* (parseInt(i/3) * spotlight_spacing - spotlight_spacing));
-
-  scene.add(spotlights[i].target);
-  spotlights[i].target.updateMatrixWorld();
  }
 
-  var ambient = new THREE.AmbientLight(0x222222, 0.5);
+  var ambient = new THREE.AmbientLight(0x222, 0.5);
   scene.add(ambient);
 
   camera.position.set(1, 10, -130);
@@ -147,6 +139,7 @@ function setup() {
   $.getJSON("assets/cues.json", function( data ) { 
       nickCues = data;
       setupVoiceCommand();
+      loadConfiguration();
   });
 
   animate();
@@ -178,11 +171,11 @@ function putSphere(pos) {
 }
 
 function createSpotlight(color) {
-  var newObj = new THREE.SpotLight(color, 1);
+  var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
   newObj.angle = 0.645; 
-  newObj.penumbra = 0.2;
-  newObj.distance = 200;
+  newObj.penumbra = 0.1;
+  newObj.distance = 400;
   return newObj;
 }
 
@@ -239,7 +232,6 @@ function setupVoiceCommand(){
 }
 
 function loadConfiguration() {
-  console.log('here?');
   if (index < nickCues.length) {
     var cueConfiguration = nickCues[index];
     camera.position.set(
@@ -256,7 +248,7 @@ function loadConfiguration() {
 
     for (var j = 0; j < cueConfiguration.spotlights.length; j++) {
       spotlights[j].color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color));
-      spotlights[j].intensity = cueConfiguration.spotlights[j].intensity * 100;
+      spotlights[j].intensity = cueConfiguration.spotlights[j].intensity;
     }
 
     index = (index+1)%nickCues.length;
