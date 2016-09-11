@@ -5,9 +5,20 @@ var hexNumbers = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
 
+var mouseX = 0, mouseY = 0;
+
 var selectedSpotlightIndex;
 var originalColor;
 var selectedColor;
+
+if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+
+
+document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
 
 function setup() {
 
@@ -16,7 +27,7 @@ function setup() {
       HEIGHT = window.innerHeight;
 
   // set some camera attributes
-  var VIEW_ANGLE = 45,
+  var VIEW_ANGLE = 60,
     ASPECT = WIDTH / HEIGHT,
     NEAR = 0.1,
     FAR = 10000;
@@ -24,9 +35,14 @@ function setup() {
   // create a WebGL renderer, camera
   // and a scene
   renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor(0xf2f7ff, 1);
-  renderer.shadowMap.enabled = true;
+  renderer.setPixelRatio( window.devicePixelRatio );
+  container.append( renderer.domElement );
+
   effect = new THREE.StereoEffect( renderer );
+  effect.setSize( window.innerWidth, window.innerHeight );
+
+  renderer.setClearColor(0xf2f7ff, 1);
+  renderer.shadowMap.enabled = true;  
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -36,6 +52,15 @@ function setup() {
   scene = new THREE.Scene();
   // add the camera to the scene
   scene.add(camera);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(
+          camera.position.x + 0.15,
+          camera.position.y,
+          camera.position.z
+        );
+        controls.noPan = true;
+        controls.noZoom = true;
   
   // create floor
   var geoFloor = new THREE.BoxGeometry(800, 1, 800);
@@ -83,14 +108,6 @@ function setup() {
 
   camera.position.set(0, 40, -300);
 
-  // Orbit Control
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.maxDistance = 400;
-  controls.maxPolarAngle = Math.PI/2; 
-
-  controls.target.set(0, 40, 0);
-  controls.update();
-
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
@@ -120,6 +137,8 @@ function setup() {
 }
   window.addEventListener('deviceorientation', setOrientationControls, true);
   effect.render(scene, camera);
+
+  animate();
 }
 
 
@@ -161,8 +180,23 @@ function createSpotlight(color) {
   return newObj;
 }
 
+function onDocumentMouseMove( event ) {
+
+        mouseX = ( event.clientX - windowHalfX ) * 10;
+        mouseY = ( event.clientY - windowHalfY ) * 10;
+
+      }
+
+function animate() {
+
+        requestAnimationFrame( animate );
+
+        render();
+
+      }
+
 function render() {
-  renderer.render(scene, camera);
+  effect.render(scene, camera);
 }
 
 function onResize() {
