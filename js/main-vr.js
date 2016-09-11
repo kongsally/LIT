@@ -68,7 +68,7 @@ function setup() {
   
    // create floor
   var textureLoader = new THREE.TextureLoader();
-  var woodTexture = new THREE.TextureLoader().load( "css/wood-floor.jpg" );
+  var woodTexture = new THREE.TextureLoader().load("assets/wood-floor.jpg" );
   woodTexture.wrapS = THREE.RepeatWrapping;
   woodTexture.wrapT = THREE.RepeatWrapping;
   woodTexture.repeat.set( 128, 128 );
@@ -95,15 +95,15 @@ function setup() {
 
   // test obj
   var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.load("http://threejs.org/examples/obj/walt/WaltHead.mtl", function( materials ) {
+  mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
     materials.preload();
     
     var objLoader = new THREE.OBJLoader();
     objLoader.setMaterials( materials );
-    objLoader.load( "http://threejs.org/examples/obj/walt/WaltHead.obj", function (object) {
+    objLoader.load("assets/hamilton_set.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI,0);
-      object.scale.set(0.3,0.3,0.3);
+      object.rotation.set(0,Math.PI/2,0);
+      object.scale.set(1.5,1.5,1.5);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { node.castShadow = true; } } );
       obj = object;
       scene.add(obj);
