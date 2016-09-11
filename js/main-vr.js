@@ -12,6 +12,8 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 var controls;
+var index = 0;
+var nickCues = [];
 
 function setup() {
   scene = new THREE.Scene();
@@ -110,7 +112,6 @@ function setup() {
     });
   });
 
-
   // create lights
  spotlights = [];
  lightHelpers = [];
@@ -137,11 +138,16 @@ function setup() {
   spotlights[i].target.updateMatrixWorld();
  }
 
-  var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
+  var ambient = new THREE.AmbientLight(0x222222, 0.5);
   scene.add(ambient);
 
   camera.position.set(1, 10, -130);
   camera.rotation.set(-3,0,0);
+
+  $.getJSON("assets/cues.json", function( data ) { 
+      nickCues = data;
+      setupVoiceCommand();
+  });
 
   animate();
 }
@@ -214,5 +220,46 @@ function fullscreen() {
     container.mozRequestFullScreen();
   } else if (container.webkitRequestFullscreen) {
     container.webkitRequestFullscreen();
+  }
+}
+
+function setupVoiceCommand(){
+  if (annyang) {
+    var commands = {
+      'Q': function() {
+        loadConfiguration();
+      },
+      'Next': function() {
+        loadConfiguration();
+      }
+    };
+    annyang.addCommands(commands);
+    annyang.start();
+  }
+}
+
+function loadConfiguration() {
+  console.log('here?');
+  if (index < nickCues.length) {
+    var cueConfiguration = nickCues[index];
+    camera.position.set(
+      cueConfiguration.camera.position.x,
+      cueConfiguration.camera.position.y,
+      cueConfiguration.camera.position.z);
+    camera.rotation.set(
+      cueConfiguration.camera.rotation.x,
+      cueConfiguration.camera.rotation.y,
+      cueConfiguration.camera.rotation.z
+    );
+
+    console.log(cueConfiguration.spotlights);
+
+    for (var j = 0; j < cueConfiguration.spotlights.length; j++) {
+      spotlights[j].color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color));
+      spotlights[j].intensity = cueConfiguration.spotlights[j].intensity * 100;
+    }
+
+    index = (index+1)%nickCues.length;
+    render();
   }
 }
