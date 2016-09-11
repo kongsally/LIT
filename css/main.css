@@ -42,6 +42,7 @@ td {
 .palette {
 	background-color: rgba(0,0);
 	color: #222;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 
@@ -120,9 +121,15 @@ main {
 	overflow-x: scroll;
 	overflow-y: hidden;
 	vertical-align: middle;
+	white-space: nowrap;
 }
 
 #saved-cues-wrapper .mdl-radio {
 	margin: 1em 0.5em;
 	vertical-align: middle;
+}
+
+#save-photo-button {
+	background-color: #fff;
+	margin-bottom: 1em;
 }

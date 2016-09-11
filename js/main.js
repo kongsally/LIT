@@ -27,6 +27,7 @@ function setup() {
   // create a WebGL renderer, camera
   // and a scene
   renderer = new THREE.WebGLRenderer();
+  renderer.domElement.setAttribute("id", "canvas");
   renderer.clearColor(0xEEEEEE);
   renderer.shadowMap.enabled = true;
 
@@ -355,10 +356,46 @@ function loadCues() {
     $("#saved-cues-wrapper").empty();
     for (var i=0; i < savedCues.length; i++) {
      $("#saved-cues-wrapper").append(
-      '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ' +
-     'for="cue' + i + '"><input type="radio" id="cue' + i + 
+      '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ' + 'for="cue' + i + 
+      ' oninput="loadConfiguration(' + i + ');" onchange="loadConfiguration(' + i + ');"><input type="radio" id="cue' + i + 
      '" class="mdl-radio__button" name="cues" value="' + i + 
      '"><span class="mdl-radio__label"> Cue ' + (i+1) + '</span></label>');
     } 
   }
 }
+
+function loadConfiguration(i) {
+  console.log('why');
+  if (i < savedCues.length) {
+    var cueConfiguration = savedCues[i];
+    camera.position.set(
+      cueConfiguration.camera.position.x,
+      cueConfiguration.camera.position.y,
+      cueConfiguration.camera.position.z);
+    camera.rotation.set(
+      cueConfiguration.camera.rotation.x,
+      cueConfiguration.camera.rotation.y,
+      cueConfiguration.camera.rotation.z
+    );
+
+    console.log(cueConfiguration.spotlights);
+
+    for (var j = 0; j < cueConfiguration.spotlights.length; j++) {
+      spotlights[j].color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color));
+      $("#palette" + (j+1)).css("color", "#" + cueConfiguration.spotlights[j].color);
+      lightHelpers[j].children[0].material.color.set(selectedColor);
+      
+      spotlights[j].intensity = cueConfiguration.spotlights[j].intensity * 100;
+      adjustLightIntensity(j+1, cueConfiguration.spotlights[j].intensity * 100);
+    }
+
+    render();
+  }
+}
+
+function downloadImage() {
+  var canvas = renderer.domElement;
+  var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  
+  window.location.href=image;
+}
+
