@@ -11,8 +11,6 @@ var selectedSpotlightIndex;
 var originalColor;
 var selectedColor;
 
-if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
-
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
@@ -38,9 +36,6 @@ function setup() {
   renderer.setPixelRatio( window.devicePixelRatio );
   container.append( renderer.domElement );
 
-  effect = new THREE.StereoEffect( renderer );
-  effect.setSize( window.innerWidth, window.innerHeight );
-
   renderer.setClearColor(0xf2f7ff, 1);
   renderer.shadowMap.enabled = true;  
   camera = new THREE.PerspectiveCamera(
@@ -53,14 +48,14 @@ function setup() {
   // add the camera to the scene
   scene.add(camera);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.target.set(
-          camera.position.x + 0.15,
-          camera.position.y,
-          camera.position.z
-        );
-        controls.noPan = true;
-        controls.noZoom = true;
+  controls = new THREE.VRControls( camera );
+  effect = new THREE.VREffect( renderer );
+
+  if ( WEBVR.isAvailable() === true ) {
+
+          document.body.appendChild( WEBVR.getButton( effect ) );
+
+      }
   
   // create floor
   var geoFloor = new THREE.BoxGeometry(800, 1, 800);
@@ -111,40 +106,13 @@ function setup() {
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
- $.getJSON("LEE_Color.json", function( data ) { 
-    for (var i=0; i < Object.keys(data).length; i++) {
-      hexNumbers.push(data[i]["hex"]);
-    }
-});
-
   window.addEventListener('resize', onResize, false);
   onResize();
 
-  //VR controls
-  function setOrientationControls(e) {
-    if (!e.alpha) {
-      return;
-    }
-
-    controls = new THREE.DeviceOrientationControls(camera, true);
-    controls.connect();
-    camera.updateProjectionMatrix();
-    controls.update();
-
-  renderer.domElement.addEventListener('click', fullscreen, false);
-
-  window.removeEventListener('deviceorientation', setOrientationControls, true);
-}
-  window.addEventListener('deviceorientation', setOrientationControls, true);
-  effect.render(scene, camera);
+   camera.updateProjectionMatrix();
 
   animate();
 }
-
-
-function fullscreen() {
-    container.requestFullscreen();
-  }
 
 function putSphere(pos) {
   var radius = 8,
@@ -188,14 +156,12 @@ function onDocumentMouseMove( event ) {
       }
 
 function animate() {
-
-        requestAnimationFrame( animate );
-
+        effect.requestAnimationFrame( animate );
         render();
-
       }
 
 function render() {
+  controls.update();
   effect.render(scene, camera);
 }
 
@@ -204,6 +170,5 @@ function onResize() {
       HEIGHT =  window.innerHeight;
   camera.aspect = WIDTH/HEIGHT;
   camera.updateProjectionMatrix();
-  renderer.setSize(WIDTH, HEIGHT);
-  render();
+  effect.setSize( window.innerWidth, window.innerHeight );
 }
