@@ -45,23 +45,8 @@ function setup() {
     var mshFloor = new THREE.Mesh( geoFloor, matFloor );
     mshFloor.receiveShadow = true;
     scene.add( mshFloor );
-  
-  // test obj
-  var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.load("http://threejs.org/examples/obj/walt/WaltHead.mtl", function( materials ) {
-    materials.preload();
-    
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setMaterials( materials );
-    objLoader.load( "http://threejs.org/examples/obj/walt/WaltHead.obj", function (object) {
-      object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI,0);
-      object.scale.set(0.8, 0.8, 0.8);
-      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { node.castShadow = true; } } );
-      obj = object;
-      scene.add(obj);
-    });
-  });
+
+    putSphere(new THREE.Vector3(0, 5, 0));
 
   // create lights
  spotlights = [];
