@@ -388,7 +388,7 @@ function loadConfiguration(i) {
       
       spotlights[j].intensity = cueConfiguration.spotlights[j].intensity * 100;
       adjustLightIntensity(j+1, cueConfiguration.spotlights[j].intensity * 100);
-      $("#s" + j).attr("value", parseInt(cueConfiguration.spotlights[j].intensity * 100));
+      $("#s" + (j+1)).attr("value", parseInt(cueConfiguration.spotlights[j].intensity * 100));
     }
 
     render();
