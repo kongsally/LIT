@@ -27,7 +27,7 @@ function setup() {
   // and a scene
   renderer = new THREE.WebGLRenderer();
   renderer.shadowMap.enabled = true;
-
+  //effect = new THREE.StereoEffect( renderer );
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -129,8 +129,6 @@ function setup() {
       leeColors = data;
   });
 
-  renderer.domElement.addEventListener('click', fullscreen, false);
-
   window.addEventListener('resize', onResize, false);
   onResize();
 
@@ -140,6 +138,11 @@ function setup() {
   $("#color-picker-card").hide();
   toggleLightHelpers();
 }
+
+
+function fullscreen() {
+    container.requestFullscreen();
+  }
 
 function putSphere(pos) {
   var radius = 8,

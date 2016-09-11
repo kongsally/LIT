@@ -2,7 +2,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="css/normalize.css">
-	<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-light_blue.min.css" />
+	<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-lime.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/material.min.js"></script>
@@ -14,6 +14,8 @@
   <script src="js/OrbitControls.js"></script>
   <script src="js/Detector.js"></script>
   <script src="js/main.js"></script>
+  <script src="./js/StereoEffect.js"></script>
+  <script src="./js/DeviceOrientationControls.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>LIT</title>
 </head>
@@ -21,7 +23,13 @@
 <body onload="setup();">
     <div class="demo-layout-transparent mdl-layout mdl-js-layout">
       <header class="mdl-layout__header mdl-layout__header--transparent">
+       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">LIT: Lights in Theatre</span>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+          <a id='vr-link' class="mdl-button mdl-js-button mdl-js-ripple-effect" onClick="window.location.href = 'vr.html';">VR Mode</a>
+        </nav>
+        </div>
       </header>
     
        <main class="mdl-layout__content">
