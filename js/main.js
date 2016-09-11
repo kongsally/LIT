@@ -1,5 +1,5 @@
 
-var camera, container, lightHelper1, obj, renderer, scene, spotLight1;
+var camera, container, lightHelper1, obj, renderer, scene, spotLight1, effect, controls;
 var spotlights, lightHelpers;
 var hexNumbers = [];
 var isLightHelperOn = true;
@@ -10,16 +10,20 @@ var originalColor;
 var selectedColor;
 
 function setup() {
-
+  scene = new THREE.Scene();
+  // set some camera attributes
+    var VIEW_ANGLE = 45,
+      ASPECT = WIDTH / HEIGHT,
+      NEAR = 0.1,
+      FAR = 10000;
+   camera = new THREE.PerspectiveCamera(
+      VIEW_ANGLE,
+      ASPECT,
+      NEAR,
+      FAR);
   container = $('#lightSimContainer');
   var WIDTH = container.width(),
       HEIGHT = window.innerHeight * 0.75;
-
-  // set some camera attributes
-  var VIEW_ANGLE = 45,
-    ASPECT = WIDTH / HEIGHT,
-    NEAR = 0.1,
-    FAR = 10000;
 
   // create a WebGL renderer, camera
   // and a scene
@@ -27,11 +31,6 @@ function setup() {
   renderer.setClearColor(0xf2f7ff, 1);
   renderer.shadowMap.enabled = true;
   //effect = new THREE.StereoEffect( renderer );
-  camera = new THREE.PerspectiveCamera(
-      VIEW_ANGLE,
-      ASPECT,
-      NEAR,
-      FAR);
 
   scene = new THREE.Scene();
   // add the camera to the scene

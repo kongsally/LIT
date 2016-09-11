@@ -1,5 +1,5 @@
 
-var camera, container, lightHelper1, obj, renderer, scene, spotLight1;
+var camera, container, lightHelper1, obj, renderer, scene, spotLight1, controls, element;
 var spotlights, lightHelpers;
 var hexNumbers = [];
 var isLightHelperOn = true;
@@ -18,44 +18,55 @@ var controls;
 
 
 function setup() {
-
-  container = $('#lightSimContainer');
-  var WIDTH = container.width(),
-      HEIGHT = window.innerHeight;
-
+  scene = new THREE.Scene();
   // set some camera attributes
-  var VIEW_ANGLE = 60,
-    ASPECT = WIDTH / HEIGHT,
-    NEAR = 0.1,
-    FAR = 10000;
-
-  // create a WebGL renderer, camera
-  // and a scene
-  renderer = new THREE.WebGLRenderer();
-  renderer.setPixelRatio( window.devicePixelRatio );
-  container.append( renderer.domElement );
-
-  renderer.setClearColor(0xf2f7ff, 1);
-  renderer.shadowMap.enabled = true;  
+    var VIEW_ANGLE = 45,
+      ASPECT = WIDTH / HEIGHT,
+      NEAR = 0.1,
+      FAR = 10000;
    camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
       NEAR,
       FAR);
+    camera.position.set(0, 40, -100);
+    scene.add(camera);
+    // create a WebGL renderer, camera
+  // and a scene
+  renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor(0xf2f7ff, 1);
+  renderer.shadowMap.enabled = true;
+  element = renderer.domElement;
+  container = $('#lightSimContainer');
+  container.append(element);
+  effect = new THREE.StereoEffect(renderer);
 
+  var WIDTH = window.innerWidth,
+      HEIGHT = window.innerHeight;
 
-  scene = new THREE.Scene();
-  // add the camera to the scene
-  scene.add(camera);
+   controls = new THREE.OrbitControls(camera, element);
+        controls.target.set(
+          camera.position.x + 0.15,
+          camera.position.y,
+          camera.position.z
+        );
+        controls.noPan = true;
+        controls.noZoom = true;
 
-  controls = new THREE.VRControls( camera );
-  effect = new THREE.VREffect( renderer );
+  function setOrientationControls(e) {
+          if (!e.alpha) {
+            return;
+          }
 
-  if ( WEBVR.isAvailable() === true ) {
+          controls = new THREE.DeviceOrientationControls(camera, true);
+          controls.connect();
+          controls.update();
 
-          document.body.appendChild( WEBVR.getButton( effect ) );
+          renderer.domElement.addEventListener('click', fullscreen, false);
 
-      }
+          window.removeEventListener('deviceorientation', setOrientationControls, true);
+        }
+        window.addEventListener('deviceorientation', setOrientationControls, true);
   
   // create floor
   var geoFloor = new THREE.BoxGeometry(800, 1, 800);
@@ -92,23 +103,10 @@ function setup() {
 
   scene.add(spotlights[i].target);
   spotlights[i].target.updateMatrixWorld();
-
-  // var lightHelper= new THREE.SpotLightHelper(spotlights[i]);
-  // lightHelpers.push(lightHelper);
-  // scene.add(lightHelpers[i]);
  }
 
   var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
   scene.add(ambient);
-
-  camera.position.set(0, 40, -5);
-
-  renderer.setSize(WIDTH, HEIGHT);
-  container.append(renderer.domElement);
-
-  window.addEventListener('resize', onResize, false);
-
-   camera.updateProjectionMatrix();
 
   animate();
 }
@@ -149,19 +147,40 @@ function createSpotlight(color) {
 
 
 function animate() {
-        effect.requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
+        update();
         render();
       }
 
 function render() {
-  controls.update();
-  effect.render(scene, camera);
-}
+        effect.render(scene, camera);
+      }
+
+function update() {
+        onResize();
+
+        camera.updateProjectionMatrix();
+
+        controls.update();
+      }
 
 function onResize() {
-  var WIDTH = container.width(),
-      HEIGHT =  window.innerHeight;
+var WIDTH = window.innerWidth,
+    HEIGHT =  window.innerHeight;
   camera.aspect = WIDTH/HEIGHT;
   camera.updateProjectionMatrix();
-  effect.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize(WIDTH, HEIGHT);
+  effect.setSize(WIDTH, HEIGHT);
 }
+
+function fullscreen() {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.msRequestFullscreen) {
+          container.msRequestFullscreen();
+        } else if (container.mozRequestFullScreen) {
+          container.mozRequestFullScreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        }
+      }
