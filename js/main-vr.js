@@ -5,7 +5,6 @@ var hexNumbers = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
 
-var mouseX = 0, mouseY = 0;
 
 var selectedSpotlightIndex;
 var originalColor;
@@ -14,8 +13,8 @@ var selectedColor;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
+var controls;
 
-document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 
 function setup() {
@@ -38,11 +37,12 @@ function setup() {
 
   renderer.setClearColor(0xf2f7ff, 1);
   renderer.shadowMap.enabled = true;  
-  camera = new THREE.PerspectiveCamera(
+   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
       NEAR,
       FAR);
+
 
   scene = new THREE.Scene();
   // add the camera to the scene
@@ -71,7 +71,7 @@ function setup() {
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 120;
+ var spotlight_spacing = 180;
  var spotlight_height = 120;
 
  for (var i=0; i < 9; i++) {
@@ -101,13 +101,12 @@ function setup() {
   var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
   scene.add(ambient);
 
-  camera.position.set(0, 40, -300);
+  camera.position.set(0, 40, -5);
 
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
   window.addEventListener('resize', onResize, false);
-  onResize();
 
    camera.updateProjectionMatrix();
 
@@ -115,7 +114,7 @@ function setup() {
 }
 
 function putSphere(pos) {
-  var radius = 8,
+  var radius = 30,
       segments = 16,
       rings = 16;
 
@@ -148,12 +147,6 @@ function createSpotlight(color) {
   return newObj;
 }
 
-function onDocumentMouseMove( event ) {
-
-        mouseX = ( event.clientX - windowHalfX ) * 10;
-        mouseY = ( event.clientY - windowHalfY ) * 10;
-
-      }
 
 function animate() {
         effect.requestAnimationFrame( animate );
