@@ -2,7 +2,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="css/normalize.css">
-	<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-lime.min.css" />
+	<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-indigo.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/material.min.js"></script>
@@ -21,54 +21,65 @@
 </head>
 
 <body onload="setup();">
-    <div class="demo-layout-transparent mdl-layout mdl-js-layout">
-      <header class="mdl-layout__header mdl-layout__header--transparent">
-       <div class="mdl-layout__header-row">
-        <span class="mdl-layout-title">LIT: Lights in Theatre</span>
-        <div class="mdl-layout-spacer"></div>
-        <nav class="mdl-navigation">
-          <a id='vr-link' class="mdl-button mdl-js-button mdl-js-ripple-effect" onClick="window.location.href = 'vr.html';">VR Mode</a>
-        </nav>
+  <div class="demo-layout-transparent mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header mdl-layout__header--transparent">
+     <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">LIT: Lights in Theatre</span>
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+        <a id='vr-link' class="mdl-button mdl-js-button mdl-js-ripple-effect" onClick="window.location.href = 'vr.html';">VR Mode</a>
+      </nav>
+      </div>
+    </header>
+  
+    <div id="spinner-wrapper">
+      <div class="mdl-spinner mdl-js-spinner is-active"></div>
+    </div>
+
+     <main class="mdl-layout__content">
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--6-col">
+          <div id="lightSimContainer"></div>
         </div>
-      </header>
-    
-       <main class="mdl-layout__content">
-        <div class="mdl-grid">
-          <div class="mdl-cell mdl-cell--6-col">
-            <div id="lightSimContainer"></div>
+        <div class="mdl-cell mdl-cell--6-col demo-card-square mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title">
+            <h4 class="mdl-card__title-text">Spotlight Controls</h4>
           </div>
-          <div class="mdl-cell mdl-cell--6-col">
-            <div id="switch-wrapper" class="mdl-grid">
-              <div class="mdl-cell mdl-cell--12-col">
-                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" 
-                      for="guideline-switch">
-                      <input type="checkbox" id="guideline-switch" class="mdl-switch__input" 
-                            onClick="toggleLightHelpers();">
-                      <span class="mdl-switch__label">
-                        Spotlight Guidlines On/Off
-                      </span>
-                </label>
-              </div>
+          <div class="mdl-grid">
+            <div id="spotlight-grid" class="mdl-cell mdl-cell--12-col">
+              <div id="switch-wrapper">
+                  <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" 
+                          for="guideline-switch">
+                    <input type="checkbox" id="guideline-switch" class="mdl-switch__input"
+                          onClick="toggleLightHelpers();">
+                    <span class="mdl-switch__label">
+                      Spotlight Guidelines On/Off
+                    </span>
+                  </label>
+                </div>
+              <table>
+                <tr>
+                  <td id="spotlight7"></td>
+                  <td id="spotlight8"></td>
+                  <td id="spotlight9"></td>
+                </tr>
+                <tr>
+                  <td id="spotlight4"></td>
+                  <td id="spotlight5"></td>
+                  <td id="spotlight6"></td>
+                </tr>
+                <tr>
+                  <td id="spotlight1"></td>
+                  <td id="spotlight2"></td>
+                  <td id="spotlight3"></td>
+                </tr>
+              </table>
             </div>
-            <div class="mdl-grid">
-              <div class="mdl-cell mdl-cell--12-col">
-                <table id="spotlight-grid">
-                  <tr>
-                    <td id="spotlight7"></td>
-                    <td id="spotlight8"></td>
-                    <td id="spotlight9"></td>
-                  </tr>
-                  <tr>
-                    <td id="spotlight4"></td>
-                    <td id="spotlight5"></td>
-                    <td id="spotlight6"></td>
-                  </tr>
-                  <tr>
-                    <td id="spotlight1"></td>
-                    <td id="spotlight2"></td>
-                    <td id="spotlight3"></td>
-                  </tr>
-                </table>
+            <div class="mdl-card__actions mdl-card--border">
+              <a id="save-cue-button" onClick="saveCue();"
+                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
+                  Save Cue
+              </a>
             </div>
 
             <div id="color-picker-card" class="mdl-cell mdl-cell--12-col">
@@ -82,15 +93,23 @@
                 
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
-                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='setSpotLightColor();'>OK</a>
                   <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='hideSpotlightControl();'>Cancel</a>
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='setSpotLightColor();'>OK</a>
                 </div>
               </div>
             </div>
           </div>
-         </div>
         </div>
-      </main>
+      </div>
+
+      <section id="cue-wrapper" class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <header class="mdl-cell mdl-cell--2-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100">
+          <h4>Saved Cues</h4>
+        </header>
+        <div id="saved-cues-wrapper" class="mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+        </div>
+      </section>
+    </main>
   </div>
 </body>
 

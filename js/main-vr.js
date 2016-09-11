@@ -1,10 +1,8 @@
-
-var camera, container, effect, lightHelper1, obj, renderer, scene, spotLight1;
+var camera, container, effect, lightHelper1, obj, renderer, scene, spotLight1, controls, element;
 var spotlights, lightHelpers;
 var hexNumbers = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
-
 
 var selectedSpotlightIndex;
 var originalColor;
@@ -16,34 +14,102 @@ var windowHalfY = window.innerHeight / 2;
 var controls;
 
 function setup() {
-
-  var WIDTH = window.innerWidth,
-      HEIGHT = window.innerHeight;
-
+  scene = new THREE.Scene();
   // set some camera attributes
-  var VIEW_ANGLE = 60,
-    ASPECT = WIDTH / HEIGHT,
-    NEAR = 0.1,
-    FAR = 1000;
-
-  // create a WebGL renderer, camera
-  // and a scene
-  renderer = new THREE.WebGLRenderer();
-  var element = renderer.domElement;
-  container = document.getElementById('vr-sim');
-  container.appendChild(element);
-
-  renderer.setClearColor(0xf2f7ff, 1);
-  renderer.shadowMap.enabled = true;  
-  camera = new THREE.PerspectiveCamera(
+    var VIEW_ANGLE = 45,
+      ASPECT = WIDTH / HEIGHT,
+      NEAR = 0.1,
+      FAR = 10000;
+   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
       NEAR,
       FAR);
 
-  scene = new THREE.Scene();
+    scene.add(camera);
+    // create a WebGL renderer, camera
+  // and a scene
+  renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor(0xf2f7ff, 1);
+  renderer.shadowMap.enabled = true;
+  element = renderer.domElement;
+  container = $('#vr-sim');
+  container.append(element);
+  effect = new THREE.StereoEffect(renderer);
+
+  var WIDTH = window.innerWidth,
+      HEIGHT = window.innerHeight;
+
+   controls = new THREE.OrbitControls(camera, element);
+  controls.target.set(
+    camera.position.x + 0.15,
+    camera.position.y,
+    camera.position.z
+  );
+  controls.noZoom = true;
+  controls.maxPolarAngle = Math.PI/2; 
+  controls.maxDistance = 600;
+
+  function setOrientationControls(e) {
+    if (!e.alpha) {
+      return;
+    }
+
+    controls = new THREE.DeviceOrientationControls(camera, true);
+    controls.connect();
+    controls.update();
+
+    renderer.domElement.addEventListener('click', fullscreen, false);
+
+    window.removeEventListener('deviceorientation', setOrientationControls, true);
+  }
+
+  window.addEventListener('deviceorientation', setOrientationControls, true);
   
-  scene.add(camera);
+   // create floor
+  var textureLoader = new THREE.TextureLoader();
+  var woodTexture = new THREE.TextureLoader().load( "css/wood-floor.jpg" );
+  woodTexture.wrapS = THREE.RepeatWrapping;
+  woodTexture.wrapT = THREE.RepeatWrapping;
+  woodTexture.repeat.set( 128, 128 );
+
+  var geoFloor = new THREE.BoxGeometry(2000, 1, 2000);
+  var matFloor = new THREE.MeshPhongMaterial({
+    color: 0XC0834A,
+    map: woodTexture
+  });
+  var mshFloor = new THREE.Mesh( geoFloor, matFloor );
+  mshFloor.receiveShadow = true;
+  scene.add( mshFloor );
+
+  // create back wall
+  var geoBackwall = new THREE.BoxGeometry(2000, 2000, 1);
+  var matBackwall = new THREE.MeshPhongMaterial({
+    color: 0XC0834A,
+    map: woodTexture
+  });
+  var mshBackwall= new THREE.Mesh(geoBackwall, matBackwall);
+  mshBackwall.receiveShadow = true;
+  mshBackwall.position.set(0, 0, 200);
+  scene.add( mshBackwall );
+
+  // test obj
+  var mtlLoader = new THREE.MTLLoader();
+  mtlLoader.load("http://threejs.org/examples/obj/walt/WaltHead.mtl", function( materials ) {
+    materials.preload();
+    
+    var objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials( materials );
+    objLoader.load( "http://threejs.org/examples/obj/walt/WaltHead.obj", function (object) {
+      object.children[0].geometry.computeBoundingBox();
+      object.rotation.set(0,Math.PI,0);
+      object.scale.set(0.3,0.3,0.3);
+      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { node.castShadow = true; } } );
+      obj = object;
+      scene.add(obj);
+    });
+  });
+
 
   // create lights
  spotlights = [];
@@ -74,45 +140,10 @@ function setup() {
   var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
   scene.add(ambient);
 
-  effect = new THREE.StereoEffect(renderer);
+  camera.position.set(1, 10, -130);
+  camera.rotation.set(-3,0,0);
 
-  
-  // create floor
-  var geoFloor = new THREE.BoxGeometry(800, 1, 800);
-  var textureLoader = new THREE.TextureLoader();
-  var matFloor = new THREE.MeshPhongMaterial({
-    color: 0XDDDDDD});
-  var mshFloor = new THREE.Mesh( geoFloor, matFloor );
-  mshFloor.receiveShadow = true;
-  scene.add( mshFloor );
-
-  putSphere(new THREE.Vector3(0, 5, 0));
-
-  camera.position.set(0, 10, -5);
-
-  controls = new THREE.OrbitControls(camera, element);
-  controls.target.set(
-    camera.position.x + 0.15,
-    camera.position.y,
-    camera.position.z
-  );
-
-  window.addEventListener('deviceorientation', setOrientationControls, true);
-  window.removeEventListener('deviceorientation', setOrientationControls, true);
-  
-  window.addEventListener('resize', onResize, false);
-
-  camera.updateProjectionMatrix();
-  onResize();
-}
-
-function setOrientationControls(e) {
-  if (!e.alpha) {
-    return;
-  }
-  controls = new THREE.DeviceOrientationControls(camera, true);
-  controls.connect();
-  controls.update();
+  animate();
 }
 
 function putSphere(pos) {
@@ -149,16 +180,39 @@ function createSpotlight(color) {
   return newObj;
 }
 
+function animate() {
+  requestAnimationFrame(animate);
+  update();
+  render();
+}
+
 function render() {
-  controls.update();
   effect.render(scene, camera);
 }
 
-function onResize() {
-  var WIDTH = window.innerWidth,
-      HEIGHT =  window.innerHeight;
-  camera.aspect = WIDTH/HEIGHT;
-  effect.setSize( window.innerWidth, window.innerHeight );
+function update() {
+  onResize();
   camera.updateProjectionMatrix();
-  render();
+  controls.update();
+}
+
+function onResize() {
+var WIDTH = window.innerWidth,
+    HEIGHT =  window.innerHeight;
+  camera.aspect = WIDTH/HEIGHT;
+  camera.updateProjectionMatrix();
+  renderer.setSize(WIDTH, HEIGHT);
+  effect.setSize(WIDTH, HEIGHT);
+}
+
+function fullscreen() {
+  if (container.requestFullscreen) {
+    container.requestFullscreen();
+  } else if (container.msRequestFullscreen) {
+    container.msRequestFullscreen();
+  } else if (container.mozRequestFullScreen) {
+    container.mozRequestFullScreen();
+  } else if (container.webkitRequestFullscreen) {
+    container.webkitRequestFullscreen();
+  }
 }

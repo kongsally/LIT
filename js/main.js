@@ -2,6 +2,7 @@
 var camera, container, lightHelper1, obj, renderer, scene, spotLight1;
 var spotlights, lightHelpers;
 var leeColors = [];
+var savedCues = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
 
@@ -13,12 +14,12 @@ function setup() {
 
   container = $('#lightSimContainer');
   var WIDTH = container.width(),
-      HEIGHT = window.innerHeight * 0.75;
+      HEIGHT = window.innerHeight * 0.6;
 
   $("#color-swatch-wrapper").css("height", HEIGHT + "px");
 
   // set some camera attributes
-  var VIEW_ANGLE = 45,
+  var VIEW_ANGLE = 60,
     ASPECT = WIDTH / HEIGHT,
     NEAR = 0.1,
     FAR = 10000;
@@ -26,8 +27,9 @@ function setup() {
   // create a WebGL renderer, camera
   // and a scene
   renderer = new THREE.WebGLRenderer();
+  renderer.clearColor(0xEEEEEE);
   renderer.shadowMap.enabled = true;
-  //effect = new THREE.StereoEffect( renderer );
+
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -39,11 +41,16 @@ function setup() {
   scene.add(camera);
   
   // create floor
-  var geoFloor = new THREE.BoxGeometry(2000, 1, 2000);
   var textureLoader = new THREE.TextureLoader();
+  var woodTexture = new THREE.TextureLoader().load( "css/wood-floor.jpg" );
+  woodTexture.wrapS = THREE.RepeatWrapping;
+  woodTexture.wrapT = THREE.RepeatWrapping;
+  woodTexture.repeat.set( 128, 128 );
+
+  var geoFloor = new THREE.BoxGeometry(2000, 1, 2000);
   var matFloor = new THREE.MeshPhongMaterial({
     color: 0XC0834A,
-    map: textureLoader.load("css/wood-floor.jpg")
+    map: woodTexture
   });
   var mshFloor = new THREE.Mesh( geoFloor, matFloor );
   mshFloor.receiveShadow = true;
@@ -51,14 +58,13 @@ function setup() {
 
   // create back wall
   var geoBackwall = new THREE.BoxGeometry(2000, 2000, 1);
-  var textureLoader = new THREE.TextureLoader();
   var matBackwall = new THREE.MeshPhongMaterial({
     color: 0XC0834A,
-    map: textureLoader.load("css/wood-floor.jpg")
+    map: woodTexture
   });
   var mshBackwall= new THREE.Mesh(geoBackwall, matBackwall);
   mshBackwall.receiveShadow = true;
-  mshBackwall.position.set(0, 0, 200);
+  mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
   
   // test obj
@@ -71,7 +77,7 @@ function setup() {
     objLoader.load( "http://threejs.org/examples/obj/walt/WaltHead.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
       object.rotation.set(0,Math.PI,0);
-      object.scale.set(2,2,2);
+      object.scale.set(0.3,0.3,0.3);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { node.castShadow = true; } } );
       obj = object;
       scene.add(obj);
@@ -95,28 +101,20 @@ function setup() {
   spotlights.push(spotlight);
   scene.add(spotlights[i]);
 
-  spotlights[i].target.position.set(
-    -0.3 * (i%3*spotlight_spacing - spotlight_spacing), 
-    0, 
-    0.3 * (parseInt(i/3) * spotlight_spacing - spotlight_spacing));
-
-  scene.add(spotlights[i].target);
-  spotlights[i].target.updateMatrixWorld();
-
   var lightHelper= new THREE.SpotLightHelper(spotlights[i]);
   lightHelpers.push(lightHelper);
   scene.add(lightHelpers[i]);
  }
 
-  var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
+  var ambient = new THREE.AmbientLight(0x222, 0.5);
   scene.add(ambient);
 
-  camera.position.set(0, 40, -300);
+  camera.position.set(0, 40, -170);
 
   // Orbit Control
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.addEventListener('change', render, false);
-  controls.maxDistance = 500;
+  controls.maxDistance = 400;
   controls.maxPolarAngle = Math.PI/2; 
 
   controls.target.set(0, 40, 0);
@@ -129,20 +127,20 @@ function setup() {
       leeColors = data;
   });
 
+  renderer.domElement.addEventListener('click', fullscreen, false);
+
   window.addEventListener('resize', onResize, false);
   onResize();
 
+  $("#color-picker-card").hide();
   populateColorPickers();
   populateSlideBars();
-  
-  $("#color-picker-card").hide();
   toggleLightHelpers();
+  loadCues();
+
+  $("#spinner-wrapper").css("display", "none");
+  $("main").css("visibility", "visible");
 }
-
-
-function fullscreen() {
-    container.requestFullscreen();
-  }
 
 function putSphere(pos) {
   var radius = 8,
@@ -173,8 +171,8 @@ function createSpotlight(color) {
   var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
   newObj.angle = 0.645; 
-  newObj.penumbra = 0.2;
-  newObj.distance = 300;
+  newObj.penumbra = 0.1;
+  newObj.distance = 400;
   return newObj;
 }
 
@@ -184,7 +182,7 @@ function render() {
 
 function onResize() {
   var WIDTH = container.width(),
-      HEIGHT =  window.innerHeight * 0.75;
+      HEIGHT =  window.innerHeight * 0.6;
   $("#color-swatch-wrapper").css("height", parseInt(HEIGHT)+ "px");
   camera.aspect = WIDTH/HEIGHT;
   camera.updateProjectionMatrix();
@@ -228,7 +226,7 @@ function populateFilterColors() {
   $("#color-swatch-wrapper").empty();
   leeColors.forEach(function(leeColor) {
     $("#color-swatch-wrapper").append("<i id='L" + leeColor.number + 
-      "' class='material-icons' onClick=\"toggleLightColor('" + 
+      "' class='material-icons md-48' onClick=\"toggleLightColor('" + 
         leeColor.number + "');\">lens</i>");
     $("#L" + leeColor.number).css("color", leeColor.hex);
   });
@@ -245,9 +243,11 @@ function adjustLightIntensity(i, value) {
 function openSpotlightControl(i) {
   selectedSpotlightIndex = i;
   $("#spotlight-grid").hide();
+  $("#save-cue-button").hide();
   $("#selected-color-name").html("");
   $("#color-picker-card").show();
   originalColor = new THREE.Color(spotlights[i-1].color);
+  selectedColor = null;
   populateFilterColors();
 }
 
@@ -257,6 +257,7 @@ function hideSpotlightControl() {
     setSpotLightColor();
   }
   $("#spotlight-grid").show();
+  $("#save-cue-button").show();
   $("#color-picker-card").hide();
   isPickingColor = false;
 }
@@ -276,11 +277,13 @@ function changeSpotLightColor() {
 }
 
 function setSpotLightColor() {
-  spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
-  $("#palette" + selectedSpotlightIndex).css("color", "#" + selectedColor.getHexString());
-  lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
-  render();
-  isPickingColor = true;
+  if(selectedColor != null) {
+    spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
+    $("#palette" + selectedSpotlightIndex).css("color", "#" + selectedColor.getHexString());
+    lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
+    render();
+    isPickingColor = true;
+  }
   hideSpotlightControl();
 }
 
@@ -312,4 +315,50 @@ function findLeeColor(leeNumber) {
   return theLee;
 }
 
+function saveCue() {
+  // for spotlight configuration in the cue object
+  var spotlightsDetail = [];
 
+  for (var i=0; i < spotlights.length; i++) {
+    var spotlightElement = {};
+    spotlightElement["id"] = i+1;
+    spotlightElement["color"] = spotlights[i].color.getHexString();
+    spotlightElement["intensity"] = spotlights[i].intensity;
+    spotlightsDetail.push(spotlightElement);
+  }
+
+  var newCue = {
+    "camera" : {
+      "position" : {
+        "x" : camera.position.x,
+        "y" : camera.position.y,
+        "z" : camera.position.z
+      },
+      "rotation" : {
+        "x" : camera.rotation.x,
+        "y" : camera.rotation.y,
+        "z" : camera.rotation.z
+      }
+    },
+    "spotlights" : spotlightsDetail
+  };
+
+  savedCues.push(newCue);
+  localStorage.setItem("cues", JSON.stringify(savedCues));
+  loadCues();
+}
+
+function loadCues() {
+  var cues = JSON.parse(localStorage.getItem("cues"));
+  if (cues != null) {
+    savedCues = cues;
+    $("#saved-cues-wrapper").empty();
+    for (var i=0; i < savedCues.length; i++) {
+     $("#saved-cues-wrapper").append(
+      '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ' +
+     'for="cue' + i + '"><input type="radio" id="cue' + i + 
+     '" class="mdl-radio__button" name="cues" value="' + i + 
+     '"><span class="mdl-radio__label"> Cue ' + (i+1) + '</span></label>');
+    } 
+  }
+}
