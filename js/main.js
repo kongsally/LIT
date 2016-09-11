@@ -26,7 +26,7 @@ function setup() {
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0xf2f7ff, 1);
   renderer.shadowMap.enabled = true;
-
+  //effect = new THREE.StereoEffect( renderer );
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -116,17 +116,44 @@ function setup() {
     }
 });
 
-  //Create sliders for spotlights
-  populateSlideBars();
-
   window.addEventListener('resize', onResize, false);
   onResize();
+
+  //VR controls
+  function setOrientationControls(e) {
+    if (!e.alpha) {
+      return;
+    }
+  }
+  window.addEventListener('deviceorientation', setOrientationControls, true);
+  controls = new THREE.DeviceOrientationControls(camera, true);
+  $("#fullscreen-switch").on('click',function() {
+    fullscreen();
+  });
+  controls.connect();
+  controls.update();
+  window.removeEventListener('deviceorientation', setOrientationControls, true);
+  //effect.render(scene, camera);
 
   populateColorPickers();
   populateSlideBars();
   
   $("#color-picker-card").hide();
   toggleLightHelpers();
+}
+
+
+function fullscreen() {
+  console.log("fullscreeen");
+  if (container.requestFullscreen) {
+    container.requestFullscreen();
+  } else if (container.msRequestFullscreen) {
+    container.msRequestFullscreen();
+  } else if (container.mozRequestFullScreen) {
+    container.mozRequestFullScreen();
+  } else if (container.webkitRequestFullscreen) {
+    container.webkitRequestFullscreen();
+  }
 }
 
 function putSphere(pos) {
