@@ -26,7 +26,9 @@ function setup() {
 
   // create a WebGL renderer, camera
   // and a scene
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({
+    preserveDrawingBuffer: true
+  });
   renderer.domElement.setAttribute("id", "canvas");
   renderer.clearColor(0xEEEEEE);
   renderer.shadowMap.enabled = true;
@@ -394,8 +396,7 @@ function loadConfiguration(i) {
 }
 
 function downloadImage() {
-  var canvas = renderer.domElement;
-  var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  
-  window.location.href=image;
+  var image = renderer.domElement.toDataURL("image/png");
+  window.location.href=image.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 }
 
