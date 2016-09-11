@@ -384,7 +384,7 @@ function loadConfiguration(i) {
     for (var j = 0; j < cueConfiguration.spotlights.length; j++) {
       spotlights[j].color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color));
       $("#palette" + (j+1)).css("color", "#" + cueConfiguration.spotlights[j].color);
-      lightHelpers[j].children[0].material.color.set(cueConfiguration.spotlights[j].color);
+      lightHelpers[j].children[0].material.color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color);
       
       spotlights[j].intensity = cueConfiguration.spotlights[j].intensity * 100;
       adjustLightIntensity(j+1, cueConfiguration.spotlights[j].intensity * 100);
