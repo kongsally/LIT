@@ -24,6 +24,7 @@
     <div class="demo-layout-transparent mdl-layout mdl-js-layout">
       <header class="mdl-layout__header mdl-layout__header--transparent">
         <span class="mdl-layout-title">LIT: Lights in Theatre</span>
+        <span><a href="vr.html"> VR Mode</a></span>
       </header>
     
        <main class="mdl-layout__content">
@@ -47,9 +48,9 @@
             <div class="mdl-grid">
               <div id="switch-wrapper" class="mdl-cell mdl-cell--12-col">
                   <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" 
-                        for="fullscreen-switch">
+                        for="guideline-switch">
                         <input type="checkbox" id="fullscreen-switch" class="mdl-switch__input" 
-                             >
+                              onClick="toggleFullscreen();">
                         <span class="mdl-switch__label">
                           Fullscreen
                         </span>

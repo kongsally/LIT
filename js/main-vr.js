@@ -13,7 +13,7 @@ function setup() {
 
   container = $('#lightSimContainer');
   var WIDTH = container.width(),
-      HEIGHT = window.innerHeight * 0.75;
+      HEIGHT = window.innerHeight;
 
   // set some camera attributes
   var VIEW_ANGLE = 45,
@@ -26,7 +26,7 @@ function setup() {
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0xf2f7ff, 1);
   renderer.shadowMap.enabled = true;
-  //effect = new THREE.StereoEffect( renderer );
+  effect = new THREE.StereoEffect( renderer );
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -88,9 +88,9 @@ function setup() {
   scene.add(spotlights[i].target);
   spotlights[i].target.updateMatrixWorld();
 
-  var lightHelper= new THREE.SpotLightHelper(spotlights[i]);
-  lightHelpers.push(lightHelper);
-  scene.add(lightHelpers[i]);
+  // var lightHelper= new THREE.SpotLightHelper(spotlights[i]);
+  // lightHelpers.push(lightHelper);
+  // scene.add(lightHelpers[i]);
  }
 
   var ambient = new THREE.AmbientLight(0xeef0ff, 0.5);
@@ -100,7 +100,6 @@ function setup() {
 
   // Orbit Control
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.addEventListener('change', render, false);
   controls.maxDistance = 400;
   controls.maxPolarAngle = Math.PI/2; 
 
@@ -127,20 +126,15 @@ function setup() {
 
     controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
+    camera.updateProjectionMatrix();
     controls.update();
 
   renderer.domElement.addEventListener('click', fullscreen, false);
 
   window.removeEventListener('deviceorientation', setOrientationControls, true);
 }
-window.addEventListener('deviceorientation', setOrientationControls, true);
-  //effect.render(scene, camera);
-
-  populateColorPickers();
-  populateSlideBars();
-  
-  $("#color-picker-card").hide();
-  toggleLightHelpers();
+  window.addEventListener('deviceorientation', setOrientationControls, true);
+  effect.render(scene, camera);
 }
 
 
@@ -188,103 +182,9 @@ function render() {
 
 function onResize() {
   var WIDTH = container.width(),
-      HEIGHT =  window.innerHeight * 0.75;
+      HEIGHT =  window.innerHeight;
   camera.aspect = WIDTH/HEIGHT;
   camera.updateProjectionMatrix();
   renderer.setSize(WIDTH, HEIGHT);
   render();
 }
-
-function toggleLightHelpers() {
-  isLightHelperOn = !isLightHelperOn;
-  lightHelpers.forEach(function(lightHelper) {
-    lightHelper.visible = isLightHelperOn;
-  });
-  $( "#toggle_guide_button" ).toggleClass(
-    "button-primary", isLightHelperOn == true);
-  render();
-}
-
-// create a slide bar for each of the spotlights
-function populateSlideBars() {
-  for (var i = 1; i < 10; i++) {
-    $( "#spotlight" + i).append("<input class='mdl-slider " +
-      "mdl-js-slider is-upgraded' type='range' id='s" + i + 
-      "' min='0' max='100' value='100' " + 
-      "oninput='adjustLightIntensity(" + i + ", this.value)' " +
-      "onchange='adjustLightIntensity(" + i + ", this.value)'>");
-  }
-}
-
-// create a color picker palette for each of the spotlights
-function populateColorPickers() {
-  for (var i = 1; i < 10; i++) {
-    $( "#spotlight" + i).append("<i id='palette" + i + 
-      "' class='material-icons' onClick='openSpotlightControl(" + i + ")'>palette</i>");
-    $( "#spotlight" + i).append("<span> Spotlight " + i + " <span id='intensity" + 
-      i + "'></span>");
-    updateIntensityLabel(i);
-  }
-}
-
-// allows slide bar to adjust light intensity
-function adjustLightIntensity(i, value) {
-  lightIntensity = value;
-  spotlights[i-1].intensity = lightIntensity/100;
-  updateIntensityLabel(i);
-  render();
-}
-
-function openSpotlightControl(i) {
-  selectedSpotlightIndex = i;
-  $("#spotlight-grid").hide();
-  $("#color-picker-card").show();
-  originalColor = new THREE.Color(spotlights[i-1].color);
-  console.log("original color");
-  console.log(originalColor);
-  toggleLightColor(i);
-}
-
-function hideSpotlightControl() {
-  if(!isPickingColor) {
-    console.log("hide, original");
-      console.log(originalColor);
-    selectedColor = originalColor;
-    setSpotLightColor();
-  }
-  $("#spotlight-grid").show();
-  $("#color-picker-card").hide();
-  isPickingColor = false;
-}
-
-function toggleLightColor(i) {
-  selectedColor = new THREE.Color(Math.random(), Math.random(), Math.random());
-  $("#color-swatch-wrapper").empty();
-  $("#color-swatch-wrapper").append("<div id='color-swatch1'" + 
-    "onClick='toggleLightColor(" + i + ");'" + ">New Color</div>");
-  $("#color-swatch1").css("background-color", "#" + selectedColor.getHexString());
-
-  changeSpotLightColor();
-}
-
-function changeSpotLightColor() {
-  spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
-  lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
-  render();
-}
-
-function setSpotLightColor() {
-  console.log("new color");
-  console.log(selectedColor);
-  spotlights[selectedSpotlightIndex-1].color.set(selectedColor);
-  $("#palette" + selectedSpotlightIndex).css("color", "#" + selectedColor.getHexString());
-  lightHelpers[selectedSpotlightIndex-1].children[0].material.color.set(selectedColor);
-  render();
-  isPickingColor = true;
-  hideSpotlightControl();
-}
-
-function updateIntensityLabel(i) {
-  $("#intensity" + i).html("(" + parseInt(spotlights[i-1].intensity * 100) + "%)");
-}
-
