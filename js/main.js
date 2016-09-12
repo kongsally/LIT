@@ -81,16 +81,18 @@ function setup() {
       object.children[0].geometry.computeBoundingBox();
       object.rotation.set(0,Math.PI/2,0);
       object.scale.set(1.5,1.5,1.5);
-      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { node.castShadow = true; } } );
-      obj = object;
-      scene.add(obj);
+      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+        node.castShadow = true;
+        node.receiveShadow = true;
+      }});
+      scene.add(object);
     });
   });
 
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 180;
+ var spotlight_spacing = 190;
  var spotlight_height = 200;
 
  for (var i=0; i < 9; i++) {
@@ -112,7 +114,7 @@ function setup() {
   var ambient = new THREE.AmbientLight(0x222, 0.5);
   scene.add(ambient);
 
-  camera.position.set(0, 40, -170);
+  camera.position.set(0, 40, -160);
 
   // Orbit Control
   controls = new THREE.OrbitControls(camera, renderer.domElement);
