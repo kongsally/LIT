@@ -92,7 +92,7 @@ function setup() {
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 190;
+ var spotlight_spacing = 200;
  var spotlight_height = 200;
 
  for (var i=0; i < 9; i++) {
