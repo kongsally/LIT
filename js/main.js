@@ -80,7 +80,7 @@ function setup() {
     objLoader.load("assets/hamilton_set.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
       object.rotation.set(0,Math.PI/2,0);
-      object.scale.set(1.5,1.5,1.5);
+      object.scale.set(3,3,3);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
         node.castShadow = true;
         node.receiveShadow = true;
@@ -177,7 +177,7 @@ function createSpotlight(color) {
   newObj.castShadow = true;
   newObj.angle = 0.645; 
   newObj.penumbra = 0.1;
-  newObj.distance = 400;
+  newObj.distance = 500;
   return newObj;
 }
 
