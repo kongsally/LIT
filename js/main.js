@@ -92,8 +92,8 @@ function setup() {
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 200;
- var spotlight_height = 200;
+ var spotlight_spacing = 400;
+ var spotlight_height = 250;
 
  for (var i=0; i < 9; i++) {
   var spotlight = createSpotlight(0XFFFFFF);
@@ -119,7 +119,7 @@ function setup() {
   // Orbit Control
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.addEventListener('change', render, false);
-  controls.maxDistance = 400;
+  controls.maxDistance = 600;
   controls.maxPolarAngle = Math.PI/2; 
 
   controls.target.set(0, 40, 0);
@@ -175,9 +175,8 @@ function putSphere(pos) {
 function createSpotlight(color) {
   var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
-  newObj.angle = 0.645; 
-  newObj.penumbra = 0.1;
-  newObj.distance = 500;
+  newObj.angle = 0.63; 
+  newObj.distance = 700;
   return newObj;
 }
 
