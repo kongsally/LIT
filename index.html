@@ -13,6 +13,14 @@
   <script src="js/OBJLoader.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/Detector.js"></script>
+  <script src="js/shaders/CopyShader.js"></script>
+    <script src="js/shaders/FXAAShader.js"></script>
+
+    <script src="js/postprocessing/EffectComposer.js"></script>
+    <script src="js/postprocessing/RenderPass.js"></script>
+    <script src="js/postprocessing/ShaderPass.js"></script>
+    <script src="js/renderers/WebGLDeferredRenderer.js"></script>
+
   <script src="js/main.js"></script>
   <script src="./js/StereoEffect.js"></script>
   <script src="./js/DeviceOrientationControls.js"></script>
@@ -38,7 +46,7 @@
 
      <main class="mdl-layout__content">
       <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--6-col">
+        <div class="mdl-cell mdl-cell--7-col">
          <div>
          <button id="save-photo-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" onclick="downloadImage();" >
                   Download Photo
@@ -46,7 +54,7 @@
           </div>
           <div id="lightSimContainer"></div>
         </div>
-        <div class="mdl-cell mdl-cell--6-col demo-card-square mdl-card mdl-shadow--2dp">
+        <div class="mdl-cell mdl-cell--5-col demo-card-square mdl-card mdl-shadow--2dp">
           <div class="mdl-card__title">
             <h4 class="mdl-card__title-text">Spotlight Controls</h4>
           </div>

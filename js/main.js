@@ -24,15 +24,6 @@ function setup() {
     NEAR = 0.1,
     FAR = 10000;
 
-  // create a WebGL renderer, camera
-  // and a scene
-  renderer = new THREE.WebGLRenderer({
-    preserveDrawingBuffer: true
-  });
-  renderer.domElement.setAttribute("id", "canvas");
-  renderer.clearColor(0xEEEEEE);
-  renderer.shadowMap.enabled = true;
-
   camera = new THREE.PerspectiveCamera(
       VIEW_ANGLE,
       ASPECT,
@@ -95,7 +86,7 @@ function setup() {
  var spotlight_spacing = 400;
  var spotlight_height = 250;
 
- for (var i=0; i < 9; i++) {
+ for (var i=0; i < 96; i++) {
   var spotlight = createSpotlight(0XFFFFFF);
 
   spotlight.position.set(
@@ -114,12 +105,19 @@ function setup() {
   var ambient = new THREE.AmbientLight(0x222, 0.5);
   scene.add(ambient);
 
+    // create a WebGL renderer, camera
+  // and a scene
+  renderer = new THREE.WebGLDeferredRenderer();
+  renderer.domElement.setAttribute("id", "canvas");
+  renderer.clearColor(0xEEEEEE);
+  renderer.shadowMap.enabled = true;
+
   camera.position.set(0, 40, -160);
 
   // Orbit Control
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.addEventListener('change', render, false);
-  controls.maxDistance = 600;
+  controls.maxDistance = 2000;
   controls.maxPolarAngle = Math.PI/2; 
 
   controls.target.set(0, 40, 0);
@@ -173,7 +171,7 @@ function putSphere(pos) {
 }
 
 function createSpotlight(color) {
-  var newObj = new THREE.SpotLight(color, 0);
+  var newObj = new THREE.SpotLight(color, 1);
   newObj.castShadow = true;
   newObj.angle = 0.63; 
   newObj.distance = 700;
