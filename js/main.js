@@ -10,11 +10,24 @@ var selectedSpotlightIndex;
 var originalColor;
 var selectedColor, selectedFilter;
 
+var raycaster;
+var mouse;
+
+var WIDTH, HEIGHT;
+
+var isClicked = false;
+var isSelectMode = false;
+
+var transformControls;
+
+var people = [];
+
 function setup() {
 
   container = $('#lightSimContainer');
-  var WIDTH = container.width(),
-      HEIGHT = window.innerHeight * 0.6;
+
+  WIDTH = container.width();
+  HEIGHT = window.innerHeight * 0.6;
 
   $("#color-swatch-wrapper").css("height", HEIGHT + "px");
 
@@ -42,6 +55,10 @@ function setup() {
   scene = new THREE.Scene();
   // add the camera to the scene
   scene.add(camera);
+
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
+
   
   // create floor
   var textureLoader = new THREE.TextureLoader();
@@ -71,23 +88,23 @@ function setup() {
   scene.add( mshBackwall );
   
   // test obj
-  var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
-    materials.preload();
+  // var mtlLoader = new THREE.MTLLoader();
+  // mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
+  //   materials.preload();
     
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setMaterials( materials );
-    objLoader.load("assets/hamilton_set.obj", function (object) {
-      object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI/2,0);
-      object.scale.set(3,3,3);
-      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
-        node.castShadow = true;
-        node.receiveShadow = true;
-      }});
-      scene.add(object);
-    });
-  });
+  //   var objLoader = new THREE.OBJLoader();
+  //   objLoader.setMaterials( materials );
+  //   objLoader.load("assets/hamilton_set.obj", function (object) {
+  //     object.children[0].geometry.computeBoundingBox();
+  //     object.rotation.set(0,Math.PI/2,0);
+  //     object.scale.set(2,2,2);
+  //     object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+  //       node.castShadow = true;
+  //       node.receiveShadow = true;
+  //     }});
+  //     scene.add(object);
+  //   });
+  // });
 
   // create lights
  spotlights = [];
@@ -111,25 +128,37 @@ function setup() {
   scene.add(lightHelpers[i]);
  }
 
-  var ambient = new THREE.AmbientLight(0x222, 0.5);
+  var ambient = new THREE.AmbientLight(0xeee, 0.8);
   scene.add(ambient);
 
   camera.position.set(0, 40, -160);
 
   // Orbit Control
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.addEventListener('change', render, false);
-  controls.maxDistance = 600;
-  controls.maxPolarAngle = Math.PI/2; 
+  orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+  orbitControls.addEventListener('change', render, false);
+  orbitControls.maxDistance = 2000;
+  orbitControls.maxPolarAngle = Math.PI/2; 
 
-  controls.target.set(0, 40, 0);
-  controls.update();
+  orbitControls.target.set(0, 40, 0);
+ 
+  transformControls = new THREE.TransformControls( camera, renderer.domElement);
+  transformControls.addEventListener( 'change', render );
+
+  transformControls.addEventListener('mouseDown', function () {
+    orbitControls.enabled = false;
+  });
+  transformControls.addEventListener('mouseUp', function () {
+      orbitControls.enabled = true;
+  });
+  
+
 
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
    $.getJSON("LEE_Color.json", function( data ) { 
       leeColors = data;
+
   });
 
   renderer.domElement.addEventListener('click', fullscreen, false);
@@ -147,8 +176,8 @@ function setup() {
   $("main").css("visibility", "visible");
 }
 
-function putSphere(pos) {
-  var radius = 8,
+function putSphere() {
+  var radius = 16,
       segments = 16,
       rings = 16;
 
@@ -167,9 +196,13 @@ function putSphere(pos) {
     sphereMaterial);
 
   // add the sphere to the scene
-  sphere.position.set(pos.x, pos.y, pos.z);
+  sphere.position.set(0, 0, 0);
   sphere.castShadow = true;
   scene.add(sphere);
+  people.push(sphere);
+  transformControls.attach( sphere );
+  scene.add( transformControls );
+  render();
 }
 
 function createSpotlight(color) {
@@ -178,6 +211,46 @@ function createSpotlight(color) {
   newObj.angle = 0.63; 
   newObj.distance = 700;
   return newObj;
+}
+
+function onMouseMove( event ) {
+
+  // calculate mouse position in normalized device coordinates
+  // (-1 to +1) for both components
+
+  mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
+  mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;   
+  transformControls.update();
+
+}
+
+function onMouseClick( event ) {
+
+  // calculate mouse position in normalized device coordinates
+  // (-1 to +1) for both components
+  if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1) {
+    console.log("onMouseClick called");
+    isClicked = true;
+     // update the picking ray with the camera and mouse position  
+  raycaster.setFromCamera( mouse, camera ); 
+
+  // calculate objects intersecting the picking ray
+  var intersects = raycaster.intersectObjects( people );
+
+  for ( var i = 0; i < intersects.length; i++ ) {
+    if (isClicked) {
+      console.log("clicked!");
+      transformControls.attach(intersects[ i ].object);
+      console.log("raycast called on " + intersects[ i ].object );
+      isClicked = false;
+    }
+  }
+  }
+
+}
+
+function toggleSelectMode() {
+  isSelectMode = !isSelectMode;
 }
 
 function render() {
@@ -392,6 +465,8 @@ function loadConfiguration(i) {
       $("#s" + (j+1)).attr("value", parseInt(cueConfiguration.spotlights[j].intensity * 100));
     }
 
+    updateIntensityLabel();
+
     render();
   }
 }
@@ -400,4 +475,47 @@ function downloadImage() {
   var image = renderer.domElement.toDataURL("image/png");
   window.location.href=image.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 }
+
+window.addEventListener( 'mousemove', onMouseMove, false );
+window.addEventListener( 'click', onMouseClick, false );
+window.requestAnimationFrame(render);
+window.addEventListener( 'keydown', function ( event ) {
+
+          switch ( event.keyCode ) {
+
+            case 81: // Q
+             transformControls.setSpace(transformControls.space === "local" ? "world" : "local" );
+              break;
+
+            case 17: // Ctrl
+             transformControls.setTranslationSnap( 100 );
+             transformControls.setRotationSnap( THREE.Math.degToRad( 15 ) );
+              break;
+
+            case 87: // W
+             transformControls.setMode( "translate" );
+              break;
+
+            case 69: // E
+             transformControls.setMode( "rotate" );
+              break;
+
+            case 82: // R
+             transformControls.setMode( "scale" );
+              break;
+
+            case 187:
+            case 107: // +, =, num+
+             transformControls.setSize(transformControls.size + 0.1 );
+              break;
+
+            case 189:
+            case 109: // -, _, num-
+             transformControls.setSize( Math.max(transformControls.size - 0.1, 0.1 ) );
+              break;
+
+          }
+
+        });
+  
 

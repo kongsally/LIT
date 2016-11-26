@@ -11,6 +11,7 @@
   <script src="js/tween.min.js"></script>
   <script src="js/MTLLoader.js"></script>
   <script src="js/OBJLoader.js"></script>
+  <script src="js/TransformControls.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/Detector.js"></script>
   <script src="js/main.js"></script>
@@ -81,6 +82,11 @@
               </table>
             </div>
             <div class="mdl-card__actions mdl-card--border">
+              
+              <a id="add-person-button" onClick="putSphere();"
+                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
+                  Add Person
+              </a>
               <a id="save-cue-button" onClick="saveCue();"
                 class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
                   Save Cue
