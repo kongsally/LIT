@@ -176,6 +176,16 @@ function setup() {
   $("main").css("visibility", "visible");
 }
 
+function randomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+
 function putSphere() {
   var radius = 16,
       segments = 16,
@@ -185,7 +195,7 @@ function putSphere() {
   var sphereMaterial =
     new THREE.MeshLambertMaterial(
       {
-        color: 0xEEEEEE
+        color : (randomColor())
       });
 
   var sphere = new THREE.Mesh(
@@ -197,6 +207,35 @@ function putSphere() {
 
   // add the sphere to the scene
   sphere.position.set(0, 0, 0);
+  sphere.castShadow = true;
+  scene.add(sphere);
+  people.push(sphere);
+  transformControls.attach( sphere );
+  scene.add( transformControls );
+  render();
+}
+
+function putSpecificSphere(color, position) {
+  var radius = 16,
+      segments = 16,
+      rings = 16;
+
+  // create the sphere's material
+  var sphereMaterial =
+    new THREE.MeshLambertMaterial(
+      {
+        color : color
+      });
+
+  var sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(
+      radius,
+      segments,
+      rings),
+    sphereMaterial);
+
+  // add the sphere to the scene
+  sphere.position.set(position);
   sphere.castShadow = true;
   scene.add(sphere);
   people.push(sphere);
@@ -396,12 +435,22 @@ function saveCue() {
   // for spotlight configuration in the cue object
   var spotlightsDetail = [];
 
+  var peopleDetail = [];
+
   for (var i=0; i < spotlights.length; i++) {
     var spotlightElement = {};
     spotlightElement["id"] = i+1;
     spotlightElement["color"] = spotlights[i].color.getHexString();
     spotlightElement["intensity"] = spotlights[i].intensity;
     spotlightsDetail.push(spotlightElement);
+  }
+
+  for (var i=0; i < people.length; i++) {
+    var peopleElement = {};
+    peopleElement["id"] = i+1;
+    peopleElement["color"] = people[i].material.color.getHexString();
+    peopleElement["pos"] = people[i].position;
+    peopleDetail.push(peopleElement);
   }
 
   var newCue = {
@@ -417,7 +466,8 @@ function saveCue() {
         "z" : camera.rotation.z
       }
     },
-    "spotlights" : spotlightsDetail
+    "spotlights" : spotlightsDetail,
+    "people" : peopleDetail
   };
 
   savedCues.push(newCue);
@@ -453,8 +503,6 @@ function loadConfiguration(i) {
       cueConfiguration.camera.rotation.z
     );
 
-    console.log(cueConfiguration.spotlights);
-
     for (var j = 0; j < cueConfiguration.spotlights.length; j++) {
       spotlights[j].color.set(new THREE.Color("#" + cueConfiguration.spotlights[j].color));
       $("#palette" + (j+1)).css("color", "#" + cueConfiguration.spotlights[j].color);
@@ -465,7 +513,15 @@ function loadConfiguration(i) {
       $("#s" + (j+1)).attr("value", parseInt(cueConfiguration.spotlights[j].intensity * 100));
     }
 
-    updateIntensityLabel();
+    //updateIntensityLabel();
+
+    people = [];
+
+    for (var j = 0; j < cueConfiguration.people.length; j++) {
+      //people[j] = putSpecificSphere(0XFFFFFF, cueConfiguration.people[j].position);
+      console.log("here???");
+      people[j] = putSphere();
+    }
 
     render();
   }
