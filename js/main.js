@@ -9,14 +9,17 @@ var isPickingColor = false;
 var selectedSpotlightIndex;
 var originalColor;
 var selectedColor, selectedFilter;
+var personColor;
+
+var outlineMaterial, outlineMesh;
+      
 
 var raycaster;
 var mouse;
 
 var WIDTH, HEIGHT;
 
-var isClicked = false;
-var isSelectMode = false;
+var selectedObject, selectedObjCol;
 
 var transformControls;
 
@@ -86,7 +89,8 @@ function setup() {
   mshBackwall.receiveShadow = true;
   mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
-  
+      
+
   // test obj
   // var mtlLoader = new THREE.MTLLoader();
   // mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
@@ -167,7 +171,9 @@ function setup() {
   onResize();
 
   $("#color-picker-card").hide();
+  $("#person-color").hide();
   populateColorPickers();
+  populatePersonColors();
   populateSlideBars();
   toggleLightHelpers();
   loadCues();
@@ -186,36 +192,7 @@ function randomColor() {
 }
 
 
-function putSphere() {
-  var radius = 16,
-      segments = 16,
-      rings = 16;
-
-  // create the sphere's material
-  var sphereMaterial =
-    new THREE.MeshLambertMaterial(
-      {
-        color : (randomColor())
-      });
-
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(
-      radius,
-      segments,
-      rings),
-    sphereMaterial);
-
-  // add the sphere to the scene
-  sphere.position.set(0, 0, 0);
-  sphere.castShadow = true;
-  scene.add(sphere);
-  people.push(sphere);
-  transformControls.attach( sphere );
-  scene.add( transformControls );
-  render();
-}
-
-function putSpecificSphere(color, position) {
+function putSphere(color) {
   var radius = 16,
       segments = 16,
       rings = 16;
@@ -235,12 +212,46 @@ function putSpecificSphere(color, position) {
     sphereMaterial);
 
   // add the sphere to the scene
-  sphere.position.set(position);
+  sphere.position.set(0, 0, 0);
   sphere.castShadow = true;
   scene.add(sphere);
   people.push(sphere);
   transformControls.attach( sphere );
   scene.add( transformControls );
+  selectedObject = sphere;
+  updateOutlineMesh();
+  render();
+}
+
+function putSpecificSphere(color, x, y, z) {
+  var radius = 16,
+      segments = 16,
+      rings = 16;
+
+  
+  // create the sphere's material
+  var sphereMaterial =
+    new THREE.MeshLambertMaterial(
+      {
+        color : color
+      });
+
+  var sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(
+      radius,
+      segments,
+      rings),
+    sphereMaterial);
+
+  // add the sphere to the scene
+  sphere.position.set(x, y, z);
+  sphere.castShadow = true;
+  scene.add(sphere);
+  people.push(sphere);
+  transformControls.attach( sphere );
+  scene.add( transformControls );
+  selectedObject = sphere;
+  updateOutlineMesh();
   render();
 }
 
@@ -257,35 +268,76 @@ function onMouseMove( event ) {
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
 
-  mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
-  mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;   
+  mouse.x = (event.clientX / WIDTH) * 2 - 1;
+  mouse.y = (event.clientY / HEIGHT) * -2 + 1;
   transformControls.update();
-
 }
 
 function onMouseClick( event ) {
 
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
-  if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1) {
-    console.log("onMouseClick called");
-    isClicked = true;
-     // update the picking ray with the camera and mouse position  
-  raycaster.setFromCamera( mouse, camera ); 
+  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
+  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
+  raycast();
+}
 
-  // calculate objects intersecting the picking ray
-  var intersects = raycaster.intersectObjects( people );
+function raycast() {
+  var mouseValues = [];
+  var m = new THREE.Vector2(mouse.x, mouse.y);
+  var left = new THREE.Vector2(0.2, 0);
+  var right = new THREE.Vector2(0, 0.2);
+  var both = new THREE.Vector2(0.2, 0.2);
+  mouseValues.push(mouse);
+  var t = mouse + left;
+  console.log("T: " + m.x + " " + m.y);
+  mouseValues.push(mouse + left);
+  mouseValues.push(mouse - left);
+  mouseValues.push(mouse + right);
+  mouseValues.push(mouse - right);
+  mouseValues.push(mouse + both);
+  mouseValues.push(mouse - both);
 
-  for ( var i = 0; i < intersects.length; i++ ) {
-    if (isClicked) {
-      console.log("clicked!");
-      transformControls.attach(intersects[ i ].object);
-      console.log("raycast called on " + intersects[ i ].object );
-      isClicked = false;
+  var intersects = [];
+  
+  for (var i = 0; i < mouseValues.length; i++) {
+    var mVal = mouseValues[i];
+    console.log("mVal: " + mVal.x + "  " + mVal.y);
+    if (mVal.x >= -1 && mVal.x <= 1 && mVal.y >= -1 && mVal.y <= 1) {
+      raycaster.setFromCamera( mVal, camera );
+      intersects.push(raycaster.intersectObjects( people ));
+      console.log(i);
     }
   }
-  }
 
+  if (intersects.length > 0) {
+        transformControls.attach(intersects[ 0 ].object);
+        selectedObject = intersects[ 0 ].object;
+      }
+  else {
+    transformControls.detach();
+    selectedObject = null;
+  }
+  updateOutlineMesh();
+  render();
+}
+
+function updateOutlineMesh() {
+  if (selectedObject == null)
+  {
+    scene.remove(outlineMesh);
+    outlineMesh = null;
+    return;
+  }
+  scene.remove(outlineMesh);
+  outlineMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.BackSide } );
+  outlineMesh = new THREE.Mesh( selectedObject.geometry, outlineMaterial );
+  outlineMesh.position.x = selectedObject.position.x;
+  outlineMesh.position.y = selectedObject.position.y;
+  outlineMesh.position.z = selectedObject.position.z;
+  outlineMesh.scale.multiplyScalar(1.1);
+  scene.add(outlineMesh);
+  render();
 }
 
 function toggleSelectMode() {
@@ -348,6 +400,16 @@ function populateFilterColors() {
   });
 }
 
+function populatePersonColors() {
+  $("#color-swatch-wrapper").empty();
+  leeColors.forEach(function(leeColor) {
+    $("#color-swatch-wrapper").append("<i id='L" + leeColor.number + 
+      "' class='material-icons md-48' onClick=\"toggleLightColor('" + 
+        leeColor.number + "');\">lens</i>");
+    $("#L" + leeColor.number).css("color", leeColor.hex);
+  });
+}
+
 // allows slide bar to adjust light intensity
 function adjustLightIntensity(i, value) {
   lightIntensity = value;
@@ -360,6 +422,7 @@ function openSpotlightControl(i) {
   selectedSpotlightIndex = i;
   $("#spotlight-grid").hide();
   $("#save-cue-button").hide();
+  $("#person-color").hide();
   $("#selected-color-name").html("");
   $("#color-picker-card").show();
   originalColor = new THREE.Color(spotlights[i-1].color);
@@ -374,7 +437,30 @@ function hideSpotlightControl() {
   }
   $("#spotlight-grid").show();
   $("#save-cue-button").show();
+  $("#add-person-button").show();
+  $("#person-color").hide();
   $("#color-picker-card").hide();
+  isPickingColor = false;
+}
+
+function openPersonControl() {
+  $("#spotlight-grid").hide();
+  $("#save-cue-button").hide();
+  $("#add-person-button").hide();
+  $("#selected-color-name").html("");
+  $("#person-color").show();
+  selectedColor = null;
+  populatePersonColors();
+}
+
+function hidePersonControl() {
+  if(!isPickingColor) {
+  }
+  $("#spotlight-grid").show();
+  $("#save-cue-button").show();
+  $("#add-person-button").show();
+  $("#color-picker-card").hide();
+  $("#person-color").hide();
   isPickingColor = false;
 }
 
@@ -401,6 +487,15 @@ function setSpotLightColor() {
     isPickingColor = true;
   }
   hideSpotlightControl();
+}
+
+function setPersonColor() {
+  if(selectedColor != null) {
+    putSphere(selectedColor);
+    render();
+    isPickingColor = true;
+  }
+  hidePersonControl();
 }
 
 function updateIntensityLabel(i) {
@@ -515,12 +610,18 @@ function loadConfiguration(i) {
 
     //updateIntensityLabel();
 
+    for (var j = 0; j < people.length; j++)
+    {
+      scene.remove(people[j]);
+    }
+
+    transformControls.detach();
     people = [];
 
     for (var j = 0; j < cueConfiguration.people.length; j++) {
-      //people[j] = putSpecificSphere(0XFFFFFF, cueConfiguration.people[j].position);
-      console.log("here???");
-      people[j] = putSphere();
+      var currPerson = cueConfiguration.people[j];
+      var pos = currPerson.pos;
+      putSpecificSphere(new THREE.Color("#" + currPerson.color), pos.x, pos.y, pos.z);
     }
 
     render();
@@ -530,6 +631,23 @@ function loadConfiguration(i) {
 function downloadImage() {
   var image = renderer.domElement.toDataURL("image/png");
   window.location.href=image.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+}
+
+function removePerson(person) {
+  var index = people.indexOf(person);
+  if (index > -1) {
+    people.splice(index, 1);
+    if (people.length > 0) {
+      transformControls.attach(people[0]);
+        selectedObject = people[0];
+    }
+    else
+    {
+      transformControls.detach();
+      selectedObject = null;
+    }
+    updateOutlineMesh();
+  }
 }
 
 window.addEventListener( 'mousemove', onMouseMove, false );
@@ -570,6 +688,12 @@ window.addEventListener( 'keydown', function ( event ) {
              transformControls.setSize( Math.max(transformControls.size - 0.1, 0.1 ) );
               break;
 
+            case 46:
+            case 8: //delete, backspace
+             scene.remove(selectedObject);
+             removePerson(selectedObject);
+             render();
+              break;
           }
 
         });

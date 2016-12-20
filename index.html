@@ -83,7 +83,7 @@
             </div>
             <div class="mdl-card__actions mdl-card--border">
               
-              <a id="add-person-button" onClick="putSphere();"
+              <a id="add-person-button" onClick="openPersonControl();"
                 class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
                   Add Person
               </a>
@@ -106,6 +106,23 @@
                 <div class="mdl-card__actions mdl-card--border">
                   <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='hideSpotlightControl();'>Cancel</a>
                   <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='setSpotLightColor();'>OK</a>
+                </div>
+              </div>
+            </div>
+
+            <div id="person-color" class="mdl-cell mdl-cell--12-col">
+              <div class="demo-card-wide mdl-card mdl-shadow--4dp">
+                <div class="mdl-card__title mdl-card--expand">
+                  <h4 class="mdl-card__title-text">
+                    Color : <span id='selected-color-name'></span>
+                  </h4>
+                </div>
+                <div id="color-swatch-wrapper" class="mdl-card__supporting-text">
+                
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='hidePersonControl();'>Cancel</a>
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick='setPersonColor();'>OK</a>
                 </div>
               </div>
             </div>
