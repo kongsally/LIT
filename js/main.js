@@ -9,15 +9,13 @@ var isPickingColor = false;
 var selectedSpotlightIndex;
 var originalColor;
 var selectedColor, selectedFilter;
-var personColor;
-
-var outlineMaterial, outlineMesh;
-      
 
 var raycaster;
 var mouse;
 
 var WIDTH, HEIGHT;
+var canvas;
+var canvasPositon;
 
 var selectedObject, selectedObjCol;
 
@@ -61,7 +59,6 @@ function setup() {
 
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
-
   
   // create floor
   var textureLoader = new THREE.TextureLoader();
@@ -89,8 +86,7 @@ function setup() {
   mshBackwall.receiveShadow = true;
   mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
-      
-
+  
   // test obj
   // var mtlLoader = new THREE.MTLLoader();
   // mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
@@ -149,10 +145,16 @@ function setup() {
   transformControls.addEventListener( 'change', render );
 
   transformControls.addEventListener('mouseDown', function () {
-    orbitControls.enabled = false;
+    if (selectedObject != null)
+    {
+      orbitControls.enabled = false;
+    }
   });
   transformControls.addEventListener('mouseUp', function () {
+      if (selectedObject != null)
+    { 
       orbitControls.enabled = true;
+    }
   });
   
 
@@ -164,6 +166,8 @@ function setup() {
       leeColors = data;
 
   });
+  canvas = renderer.domElement;
+  canvasPosition = $(canvas).position();
 
   renderer.domElement.addEventListener('click', fullscreen, false);
 
@@ -171,9 +175,7 @@ function setup() {
   onResize();
 
   $("#color-picker-card").hide();
-  $("#person-color").hide();
   populateColorPickers();
-  populatePersonColors();
   populateSlideBars();
   toggleLightHelpers();
   loadCues();
@@ -219,7 +221,6 @@ function putSphere(color) {
   transformControls.attach( sphere );
   scene.add( transformControls );
   selectedObject = sphere;
-  updateOutlineMesh();
   render();
 }
 
@@ -228,7 +229,6 @@ function putSpecificSphere(color, x, y, z) {
       segments = 16,
       rings = 16;
 
-  
   // create the sphere's material
   var sphereMaterial =
     new THREE.MeshLambertMaterial(
@@ -252,6 +252,7 @@ function putSpecificSphere(color, x, y, z) {
   scene.add( transformControls );
   selectedObject = sphere;
   updateOutlineMesh();
+
   render();
 }
 
@@ -268,57 +269,29 @@ function onMouseMove( event ) {
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
 
-  mouse.x = (event.clientX / WIDTH) * 2 - 1;
-  mouse.y = (event.clientY / HEIGHT) * -2 + 1;
+  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
+  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
   transformControls.update();
+
 }
 
 function onMouseClick( event ) {
-
-  // calculate mouse position in normalized device coordinates
-  // (-1 to +1) for both components
-  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
-  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
-  raycast();
+  mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
+  mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
+  if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
+  {
+    raycast();
+  }
 }
 
 function raycast() {
-  var mouseValues = [];
-  var m = new THREE.Vector2(mouse.x, mouse.y);
-  var left = new THREE.Vector2(0.2, 0);
-  var right = new THREE.Vector2(0, 0.2);
-  var both = new THREE.Vector2(0.2, 0.2);
-  mouseValues.push(mouse);
-  var t = mouse + left;
-  console.log("T: " + m.x + " " + m.y);
-  mouseValues.push(mouse + left);
-  mouseValues.push(mouse - left);
-  mouseValues.push(mouse + right);
-  mouseValues.push(mouse - right);
-  mouseValues.push(mouse + both);
-  mouseValues.push(mouse - both);
-
-  var intersects = [];
-  
-  for (var i = 0; i < mouseValues.length; i++) {
-    var mVal = mouseValues[i];
-    console.log("mVal: " + mVal.x + "  " + mVal.y);
-    if (mVal.x >= -1 && mVal.x <= 1 && mVal.y >= -1 && mVal.y <= 1) {
-      raycaster.setFromCamera( mVal, camera );
-      intersects.push(raycaster.intersectObjects( people ));
-      console.log(i);
-    }
-  }
+  raycaster.setFromCamera( mouse, camera );
+  var intersects = raycaster.intersectObjects( people );
 
   if (intersects.length > 0) {
         transformControls.attach(intersects[ 0 ].object);
         selectedObject = intersects[ 0 ].object;
       }
-  else {
-    transformControls.detach();
-    selectedObject = null;
-  }
-  updateOutlineMesh();
   render();
 }
 
@@ -339,6 +312,7 @@ function updateOutlineMesh() {
   scene.add(outlineMesh);
   render();
 }
+
 
 function toggleSelectMode() {
   isSelectMode = !isSelectMode;
@@ -400,16 +374,6 @@ function populateFilterColors() {
   });
 }
 
-function populatePersonColors() {
-  $("#color-swatch-wrapper").empty();
-  leeColors.forEach(function(leeColor) {
-    $("#color-swatch-wrapper").append("<i id='L" + leeColor.number + 
-      "' class='material-icons md-48' onClick=\"toggleLightColor('" + 
-        leeColor.number + "');\">lens</i>");
-    $("#L" + leeColor.number).css("color", leeColor.hex);
-  });
-}
-
 // allows slide bar to adjust light intensity
 function adjustLightIntensity(i, value) {
   lightIntensity = value;
@@ -422,7 +386,6 @@ function openSpotlightControl(i) {
   selectedSpotlightIndex = i;
   $("#spotlight-grid").hide();
   $("#save-cue-button").hide();
-  $("#person-color").hide();
   $("#selected-color-name").html("");
   $("#color-picker-card").show();
   originalColor = new THREE.Color(spotlights[i-1].color);
@@ -437,30 +400,7 @@ function hideSpotlightControl() {
   }
   $("#spotlight-grid").show();
   $("#save-cue-button").show();
-  $("#add-person-button").show();
-  $("#person-color").hide();
   $("#color-picker-card").hide();
-  isPickingColor = false;
-}
-
-function openPersonControl() {
-  $("#spotlight-grid").hide();
-  $("#save-cue-button").hide();
-  $("#add-person-button").hide();
-  $("#selected-color-name").html("");
-  $("#person-color").show();
-  selectedColor = null;
-  populatePersonColors();
-}
-
-function hidePersonControl() {
-  if(!isPickingColor) {
-  }
-  $("#spotlight-grid").show();
-  $("#save-cue-button").show();
-  $("#add-person-button").show();
-  $("#color-picker-card").hide();
-  $("#person-color").hide();
   isPickingColor = false;
 }
 
@@ -487,15 +427,6 @@ function setSpotLightColor() {
     isPickingColor = true;
   }
   hideSpotlightControl();
-}
-
-function setPersonColor() {
-  if(selectedColor != null) {
-    putSphere(selectedColor);
-    render();
-    isPickingColor = true;
-  }
-  hidePersonControl();
 }
 
 function updateIntensityLabel(i) {
@@ -616,12 +547,14 @@ function loadConfiguration(i) {
     }
 
     transformControls.detach();
+
     people = [];
 
     for (var j = 0; j < cueConfiguration.people.length; j++) {
       var currPerson = cueConfiguration.people[j];
       var pos = currPerson.pos;
       putSpecificSphere(new THREE.Color("#" + currPerson.color), pos.x, pos.y, pos.z);
+
     }
 
     render();
@@ -646,9 +579,10 @@ function removePerson(person) {
       transformControls.detach();
       selectedObject = null;
     }
-    updateOutlineMesh();
+    //updateOutlineMesh();
   }
 }
+
 
 window.addEventListener( 'mousemove', onMouseMove, false );
 window.addEventListener( 'click', onMouseClick, false );
@@ -694,6 +628,8 @@ window.addEventListener( 'keydown', function ( event ) {
              removePerson(selectedObject);
              render();
               break;
+
+
           }
 
         });
