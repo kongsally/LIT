@@ -73,12 +73,11 @@ function setup() {
   woodTexture.repeat.set( 128, 128 );
 
   var geoFloor = new THREE.BoxGeometry(2000, 1, 2000);
-  var matFloor = new THREE.MeshPhongMaterial({
+  var matFloor = new THREE.MeshLambertMaterial({
     color: 0XC0834A,
     map: woodTexture
   });
   var mshFloor = new THREE.Mesh( geoFloor, matFloor );
-  mshFloor.receiveShadow = true;
   scene.add( mshFloor );
 
   // create back wall
@@ -93,16 +92,16 @@ function setup() {
   //scene.add( mshBackwall );
   
   var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.load("assets/irongate_set.mtl", function( materials ) {
+  mtlLoader.load("assets/irongate.mtl", function( materials ) {
     materials.preload();
     
     var objLoader = new THREE.OBJLoader();
     objLoader.setMaterials( materials );
-    objLoader.load("assets/irongate_set.obj", function (object) {
+    objLoader.load("assets/irongate.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI,0);
+      object.rotation.set(0,0,0);
       object.scale.set(4,4,4);
-      object.position.set(0, -25, -300);
+      object.position.set(0, -25, 300);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
         node.castShadow = true;
         node.receiveShadow = true;
@@ -111,22 +110,37 @@ function setup() {
     });
   });
 
+  // var objLoader = new THREE.OBJLoader();
+  //   objLoader.load("assets/human.obj", function (object) {
+  //     object.children[0].geometry.computeBoundingBox();
+  //     object.rotation.set(0,Math.PI,0);
+  //     object.scale.set(3.5,3.5,3.5);
+  //     object.position.set(0, 63.5, 0);
+  //     object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+  //       node.castShadow = true;
+  //       node.receiveShadow = true;
+  //     }});
+  //     people.push(object)
+  //     scene.add(object);
+  //   });
 
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 450;
+ var spotlight_spacing = 400;
  var spotlight_height = 450;
 
  for (var i=0; i < 9; i++) {
-  var spotlight = createSpotlight(0XFFFFFF, -1 * (i%3*spotlight_spacing - spotlight_spacing), 
-    spotlight_height, 
-    parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3);
+  var spotlight = createSpotlight(0XFFFFFF);
 
-  spotlight.position.set(
-    -1 * (i%3*spotlight_spacing - spotlight_spacing), 
-    spotlight_height, 
-    parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3);
+  var x = -1 * (i%3*spotlight_spacing - spotlight_spacing);
+  var y = spotlight_height;
+  var z = parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3;
+  
+  spotlight.position.set(x, y, z);
+
+  //spotlight.target.position.set( - x / 4, 0, - z);
+  //scene.add(spotlight.target);
 
   spotlights.push(spotlight);
   scene.add(spotlights[i]);
@@ -136,10 +150,10 @@ function setup() {
   scene.add(lightHelpers[i]);
  }
 
-  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.5);
+  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.4);
   scene.add(ambient);
 
-  camera.position.set(15, 656, -1099);
+  camera.position.set(15, 656, 1099);
 
   // Orbit Control
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -193,12 +207,13 @@ function setup() {
 
   $("#spinner-wrapper").css("display", "none");
   $("main").css("visibility", "visible");
+  render();
 }
 
 
 
 function putSphere(color) {
-  var radius = 16,
+  /*var radius = 16,
       segments = 16,
       rings = 16;
 
@@ -223,47 +238,96 @@ function putSphere(color) {
   people.push(sphere);
   transformControls.attach( sphere );
   scene.add( transformControls );
-  selectedObject = sphere;
-  render();
+  selectedObject = sphere; */
+
+  var objLoader = new THREE.OBJLoader();
+  var geom;
+  objLoader.load("assets/human.obj", function (object) {
+    var geom = object.children[0].geometry;
+    var sphereMaterial =
+    new THREE.MeshLambertMaterial(
+    {
+      color : color
+    });
+
+    var sphere = new THREE.Mesh(
+      geom,
+      sphereMaterial);
+    sphere.position.set(0, 68, 0);
+    sphere.rotation.set(0, 0, 0);
+    sphere.scale.set(3.5, 3.5, 3.5);
+        people.push(sphere);
+        scene.add(sphere);
+        transformControls.attach(sphere);
+        scene.add(transformControls);
+        selectedObject = sphere;
+        render();
+  });
 }
 
 function putSpecificSphere(color, x, y, z) {
-  var radius = 16,
-      segments = 16,
-      rings = 16;
+  // var radius = 16,
+  //     segments = 16,
+  //     rings = 16;
 
-  // create the sphere's material
-  var sphereMaterial =
+  // // create the sphere's material
+  // var sphereMaterial =
+  //   new THREE.MeshLambertMaterial(
+  //     {
+  //       color : color
+  //     });
+
+  // var sphere = new THREE.Mesh(
+  //   new THREE.SphereGeometry(
+  //     radius,
+  //     segments,
+  //     rings),
+  //   sphereMaterial);
+
+  // // add the sphere to the scene
+  // sphere.position.set(x, y, z);
+  // sphere.castShadow = true;
+  // scene.add(sphere);
+  // people.push(sphere);
+  // transformControls.attach( sphere );
+  // scene.add( transformControls );
+  // selectedObject = sphere;
+
+  // render();
+
+  var objLoader = new THREE.OBJLoader();
+  var geom;
+  objLoader.load("assets/human.obj", function (object) {
+    var geom = object.children[0].geometry;
+    var sphereMaterial =
     new THREE.MeshLambertMaterial(
-      {
-        color : color
-      });
+    {
+      color : color
+    });
 
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(
-      radius,
-      segments,
-      rings),
-    sphereMaterial);
-
-  // add the sphere to the scene
-  sphere.position.set(x, y, z);
-  sphere.castShadow = true;
-  scene.add(sphere);
-  people.push(sphere);
-  transformControls.attach( sphere );
-  scene.add( transformControls );
-  selectedObject = sphere;
-
-  render();
+    var sphere = new THREE.Mesh(
+      geom,
+      sphereMaterial);
+    sphere.position.set(x, y, z);
+    sphere.rotation.set(0, 0, 0);
+    sphere.scale.set(3.5, 3.5, 3.5);
+        people.push(sphere);
+        scene.add(sphere);
+        transformControls.attach(sphere);
+        scene.add(transformControls);
+        selectedObject = sphere;
+        render();
+  });
 }
 
-function createSpotlight(color, x, y, z) {
+function createSpotlight(color) {
   var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
-  newObj.angle = 0.65;
-  newObj.distance = 600;
-  newObj.target = (x/2, y, z - 300);
+  newObj.angle = 0.50;
+  newObj.distance = 1500;
+  newObj.penumbra = 0.1;
+  newObj.decay = 0.2;
+  newObj.target.position.set(0, 0, 0);
   return newObj;
 }
 
@@ -274,6 +338,10 @@ function onMouseMove( event ) {
 
   mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
   mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
+  if (window.innerWidth > 1024)
+  {
+    mouse.y += 0.5;
+  }
   transformControls.update();
 
 }
@@ -283,7 +351,11 @@ function onMouseClick( event ) {
   canvasPosition = $(canvas).position();
   mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
   mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
-  if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
+  if (window.innerWidth > 1024)
+  {
+    mouse.y += 0.5;
+  }
+    if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
   {
     raycast();
   }
@@ -331,7 +403,13 @@ function updateOutlineMesh() {
   outlineMesh.position.x = selectedObject.position.x;
   outlineMesh.position.y = selectedObject.position.y;
   outlineMesh.position.z = selectedObject.position.z;
-  outlineMesh.scale.multiplyScalar(1.1);
+  outlineMesh.scale.x = selectedObject.scale.x;
+  outlineMesh.scale.y = selectedObject.scale.y;
+  outlineMesh.scale.z = selectedObject.scale.z;
+  outlineMesh.rotation.x = selectedObject.rotation.x;
+  outlineMesh.rotation.y = selectedObject.rotation.y;
+  outlineMesh.rotation.z = selectedObject.rotation.z;
+  outlineMesh.scale.multiplyScalar(1.03);
   scene.add(outlineMesh);
 }
 
@@ -713,7 +791,7 @@ window.addEventListener( 'keydown', function ( event ) {
               break;
 
             case 86: // V
-             console.log(camera.position);
+            console.log(camera.position);
             break;
 
           }

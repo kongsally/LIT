@@ -84,7 +84,7 @@ i:hover {
 
 #color-person-wrapper {
 	background-color: #000;
-	height: 70px !important;
+	height: 150px !important;
 	overflow-y: scroll;
 	text-align: center;
 }
