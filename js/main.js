@@ -11,7 +11,7 @@ var hemiStairs;
 var stairHelper;
 var stageHelper;
 
-var currCue;
+var currCue = 0;
 
 var selectedSpotlightIndex;
 var originalColor;
@@ -721,6 +721,7 @@ function loadCues() {
 }
 
 function loadConfiguration(i) {
+  currCue = i;
   if (i < savedCues.length) {
     var cueConfiguration = savedCues[i];
     camera.position.set(
@@ -762,6 +763,20 @@ function loadConfiguration(i) {
     }
 
     render();
+  }
+}
+
+function nextCue() {
+  if (currCue < (savedCues.length - 1)) {
+    loadConfiguration(currCue + 1);
+    currCue++;
+  }
+}
+
+function prevCue() {
+  if (currCue > 1) {
+    loadConfiguration(currCue - 1);
+    currCue--;
   }
 }
 
@@ -835,6 +850,16 @@ window.addEventListener( 'keydown', function ( event ) {
 
             case 86: // V
             console.log(camera.position);
+            break;
+
+            case 39:
+            orbitControls.keyPanSpeed = 0;
+            nextCue();
+            break;
+
+            case 37:
+            orbitControls.keyPanSpeed = 0;
+            prevCue();
             break;
 
           }
