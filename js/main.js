@@ -154,21 +154,21 @@ function setup() {
   scene.add(lightHelpers[i]);
  }
 
- hemiStage = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
-  hemiStage.position.set(0, 100, 0);
- scene.add(hemiStage);
+ // hemiStage = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.4);
+ //  hemiStage.position.set(0, -200, 400);
+ // scene.add(hemiStage);
 
- stageHelper = new THREE.HemisphereLightHelper(hemiStage, 700);
- scene.add(stageHelper);
+ // stageHelper = new THREE.HemisphereLightHelper(hemiStage, 700);
+ // //scene.add(stageHelper);
 
- hemiStairs = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
- hemiStairs.position.set(0, 150, 750);
- scene.add(hemiStairs);
+ // hemiStairs = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
+ // hemiStairs.position.set(0, -500, 0);
+ // scene.add(hemiStairs);
 
- stairHelper = new THREE.HemisphereLightHelper(hemiStairs, 700);
- scene.add(stairHelper);
+ // stairHelper = new THREE.HemisphereLightHelper(hemiStairs, 700);
+ // //scene.add(stairHelper);
 
-  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.4);
+  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.8);
   scene.add(ambient);
 
   camera.position.set(0, 50, 180);
@@ -228,7 +228,21 @@ function setup() {
   render();
 }
 
+function switchAudiencePers()
+{
+  camera.position.set(0, 80, 200);
+  camera.lookAt(new THREE.Vector3( 0, 5, -5));
+  camera.updateProjectionMatrix();
+  render();
+}
 
+function switchActorPers()
+{
+  camera.position.set(0, 10, -20);
+  camera.lookAt(new THREE.Vector3( 0, 20, 200));
+  camera.updateProjectionMatrix();
+  render();
+}
 
 function putSphere(color) {
   /*var radius = 16,
