@@ -721,7 +721,7 @@ function loadCues() {
 }
 
 function loadConfiguration(i) {
-  currCue = i;
+  //currCue = i;
   if (i < savedCues.length) {
     var cueConfiguration = savedCues[i];
     camera.position.set(
@@ -855,11 +855,13 @@ window.addEventListener( 'keydown', function ( event ) {
             case 39:
             orbitControls.keyPanSpeed = 0;
             nextCue();
+            loadCues();
             break;
 
             case 37:
             orbitControls.keyPanSpeed = 0;
             prevCue();
+            loadCues();
             break;
 
           }
