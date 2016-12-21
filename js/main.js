@@ -2,6 +2,7 @@
 var camera, container, lightHelper1, obj, renderer, scene, spotLight1;
 var spotlights, lightHelpers;
 var leeColors = [];
+var peopleColors = [];
 var savedCues = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
@@ -9,15 +10,14 @@ var isPickingColor = false;
 var selectedSpotlightIndex;
 var originalColor;
 var selectedColor, selectedFilter;
-var personColor;
-
-var outlineMaterial, outlineMesh;
       
 
 var raycaster;
 var mouse;
 
 var WIDTH, HEIGHT;
+var canvas;
+var canvasPositon;
 
 var selectedObject, selectedObjCol;
 
@@ -33,6 +33,7 @@ function setup() {
   HEIGHT = window.innerHeight * 0.6;
 
   $("#color-swatch-wrapper").css("height", HEIGHT + "px");
+   $("#color-person-wrapper").css("height", HEIGHT + "px");
 
   // set some camera attributes
   var VIEW_ANGLE = 60,
@@ -160,10 +161,18 @@ function setup() {
   renderer.setSize(WIDTH, HEIGHT);
   container.append(renderer.domElement);
 
+   $.getJSON("PEOPLE.json", function( data ) { 
+      peopleColors = data;
+
+  });
+
    $.getJSON("LEE_Color.json", function( data ) { 
       leeColors = data;
 
   });
+
+  canvas = renderer.domElement;
+  canvasPosition = $(canvas).position();
 
   renderer.domElement.addEventListener('click', fullscreen, false);
 
@@ -173,7 +182,6 @@ function setup() {
   $("#color-picker-card").hide();
   $("#person-color").hide();
   populateColorPickers();
-  populatePersonColors();
   populateSlideBars();
   toggleLightHelpers();
   loadCues();
@@ -182,14 +190,6 @@ function setup() {
   $("main").css("visibility", "visible");
 }
 
-function randomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
 
 
 function putSphere(color) {
@@ -219,7 +219,6 @@ function putSphere(color) {
   transformControls.attach( sphere );
   scene.add( transformControls );
   selectedObject = sphere;
-  updateOutlineMesh();
   render();
 }
 
@@ -274,51 +273,22 @@ function onMouseMove( event ) {
 }
 
 function onMouseClick( event ) {
-
-  // calculate mouse position in normalized device coordinates
-  // (-1 to +1) for both components
-  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
-  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
-  raycast();
+  mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
+  mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
+  if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
+  {
+    raycast();
+  }
 }
 
 function raycast() {
-  var mouseValues = [];
-  var m = new THREE.Vector2(mouse.x, mouse.y);
-  var left = new THREE.Vector2(0.2, 0);
-  var right = new THREE.Vector2(0, 0.2);
-  var both = new THREE.Vector2(0.2, 0.2);
-  mouseValues.push(mouse);
-  var t = mouse + left;
-  console.log("T: " + m.x + " " + m.y);
-  mouseValues.push(mouse + left);
-  mouseValues.push(mouse - left);
-  mouseValues.push(mouse + right);
-  mouseValues.push(mouse - right);
-  mouseValues.push(mouse + both);
-  mouseValues.push(mouse - both);
-
-  var intersects = [];
-  
-  for (var i = 0; i < mouseValues.length; i++) {
-    var mVal = mouseValues[i];
-    console.log("mVal: " + mVal.x + "  " + mVal.y);
-    if (mVal.x >= -1 && mVal.x <= 1 && mVal.y >= -1 && mVal.y <= 1) {
-      raycaster.setFromCamera( mVal, camera );
-      intersects.push(raycaster.intersectObjects( people ));
-      console.log(i);
-    }
-  }
+  raycaster.setFromCamera( mouse, camera );
+  var intersects = raycaster.intersectObjects( people );
 
   if (intersects.length > 0) {
         transformControls.attach(intersects[ 0 ].object);
         selectedObject = intersects[ 0 ].object;
       }
-  else {
-    transformControls.detach();
-    selectedObject = null;
-  }
-  updateOutlineMesh();
   render();
 }
 
@@ -352,6 +322,7 @@ function onResize() {
   var WIDTH = container.width(),
       HEIGHT =  window.innerHeight * 0.6;
   $("#color-swatch-wrapper").css("height", parseInt(HEIGHT)+ "px");
+  $("#color-person-wrapper").css("height", parseInt(HEIGHT)+ "px");
   camera.aspect = WIDTH/HEIGHT;
   camera.updateProjectionMatrix();
   renderer.setSize(WIDTH, HEIGHT);
@@ -400,13 +371,14 @@ function populateFilterColors() {
   });
 }
 
+
 function populatePersonColors() {
-  $("#color-swatch-wrapper").empty();
-  leeColors.forEach(function(leeColor) {
-    $("#color-swatch-wrapper").append("<i id='L" + leeColor.number + 
-      "' class='material-icons md-48' onClick=\"toggleLightColor('" + 
-        leeColor.number + "');\">lens</i>");
-    $("#L" + leeColor.number).css("color", leeColor.hex);
+  $("#color-person-wrapper").empty();
+  peopleColors.forEach(function(peopleColor) {
+    $("#color-person-wrapper").append("<i id='L" + peopleColor.number + 
+      "' class='material-icons md-48' onClick=\"setPersonColor('" + 
+        peopleColor.number + "');\">lens</i>");
+    $("#L" + peopleColor.number).css("color", peopleColor.hex);
   });
 }
 
@@ -489,8 +461,11 @@ function setSpotLightColor() {
   hideSpotlightControl();
 }
 
-function setPersonColor() {
-  if(selectedColor != null) {
+function setPersonColor(personNumber) {
+   var peopleColor = findPersonColor(personNumber);
+   selectedColor = new THREE.Color(peopleColor["hex"]);
+  $("#selected-color-name").html(" "  + peopleColor["name"] + " (L" + personNumber + ")");
+  if(peopleColor != null) {
     putSphere(selectedColor);
     render();
     isPickingColor = true;
@@ -524,6 +499,18 @@ function findLeeColor(leeNumber) {
     }
   }
   return theLee;
+}
+
+function findPersonColor(personNumber) {
+  var theColor;
+  for (var i = 0; i < peopleColors.length; i++) {
+    var peopleColor = peopleColors[i];
+    if (personNumber == peopleColor.number) {
+      theColor = peopleColor;
+      break;
+    }
+  }
+  return theColor;
 }
 
 function saveCue() {
@@ -646,7 +633,7 @@ function removePerson(person) {
       transformControls.detach();
       selectedObject = null;
     }
-    updateOutlineMesh();
+    //updateOutlineMesh();
   }
 }
 

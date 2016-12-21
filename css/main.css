@@ -82,6 +82,13 @@ i:hover {
 	text-align: center;
 }
 
+#color-person-wrapper {
+	background-color: #000;
+	height: 70px !important;
+	overflow-y: scroll;
+	text-align: center;
+}
+
 .mdl-card__actions.mdl-card--border {
 	text-align: right;
 }
