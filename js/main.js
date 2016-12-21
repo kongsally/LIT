@@ -6,6 +6,12 @@ var peopleColors = [];
 var savedCues = [];
 var isLightHelperOn = true;
 var isPickingColor = false;
+var hemiStage;
+var hemiStairs;
+var stairHelper;
+var stageHelper;
+
+var currCue;
 
 var selectedSpotlightIndex;
 var originalColor;
@@ -147,6 +153,20 @@ function setup() {
   lightHelpers.push(lightHelper);
   scene.add(lightHelpers[i]);
  }
+
+ hemiStage = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
+  hemiStage.position.set(0, 100, 0);
+ scene.add(hemiStage);
+
+ stageHelper = new THREE.HemisphereLightHelper(hemiStage, 700);
+ scene.add(stageHelper);
+
+ hemiStairs = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
+ hemiStairs.position.set(0, 150, 750);
+ scene.add(hemiStairs);
+
+ stairHelper = new THREE.HemisphereLightHelper(hemiStairs, 700);
+ scene.add(stairHelper);
 
   var ambient = new THREE.AmbientLight(0XFFFFFF, 0.4);
   scene.add(ambient);
