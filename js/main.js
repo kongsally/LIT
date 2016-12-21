@@ -10,7 +10,7 @@ var isPickingColor = false;
 var selectedSpotlightIndex;
 var originalColor;
 var selectedColor, selectedFilter;
-      
+
 
 var raycaster;
 var mouse;
@@ -62,7 +62,6 @@ function setup() {
 
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
-
   
   // create floor
   var textureLoader = new THREE.TextureLoader();
@@ -90,8 +89,7 @@ function setup() {
   mshBackwall.receiveShadow = true;
   mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
-      
-
+  
   // test obj
   // var mtlLoader = new THREE.MTLLoader();
   // mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
@@ -150,10 +148,16 @@ function setup() {
   transformControls.addEventListener( 'change', render );
 
   transformControls.addEventListener('mouseDown', function () {
-    orbitControls.enabled = false;
+    if (selectedObject != null)
+    {
+      orbitControls.enabled = false;
+    }
   });
   transformControls.addEventListener('mouseUp', function () {
+      if (selectedObject != null)
+    { 
       orbitControls.enabled = true;
+    }
   });
   
 
@@ -170,6 +174,8 @@ function setup() {
       leeColors = data;
 
   });
+  canvas = renderer.domElement;
+  canvasPosition = $(canvas).position();
 
   canvas = renderer.domElement;
   canvasPosition = $(canvas).position();
@@ -227,7 +233,6 @@ function putSpecificSphere(color, x, y, z) {
       segments = 16,
       rings = 16;
 
-  
   // create the sphere's material
   var sphereMaterial =
     new THREE.MeshLambertMaterial(
@@ -251,6 +256,7 @@ function putSpecificSphere(color, x, y, z) {
   scene.add( transformControls );
   selectedObject = sphere;
   updateOutlineMesh();
+
   render();
 }
 
@@ -267,9 +273,10 @@ function onMouseMove( event ) {
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
 
-  mouse.x = (event.clientX / WIDTH) * 2 - 1;
-  mouse.y = (event.clientY / HEIGHT) * -2 + 1;
+  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
+  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
   transformControls.update();
+
 }
 
 function onMouseClick( event ) {
@@ -309,6 +316,7 @@ function updateOutlineMesh() {
   scene.add(outlineMesh);
   render();
 }
+
 
 function toggleSelectMode() {
   isSelectMode = !isSelectMode;
@@ -394,12 +402,24 @@ function openSpotlightControl(i) {
   selectedSpotlightIndex = i;
   $("#spotlight-grid").hide();
   $("#save-cue-button").hide();
+  $("#add-person-button").hide();
   $("#person-color").hide();
   $("#selected-color-name").html("");
   $("#color-picker-card").show();
   originalColor = new THREE.Color(spotlights[i-1].color);
   selectedColor = null;
   populateFilterColors();
+}
+
+function openPersonControl(i) {
+  $("#spotlight-grid").hide();
+  $("#save-cue-button").hide();
+  $("#add-person-button").hide();
+  $("#color-picker-card").hide();
+  $("#selected-color-name").html("");
+  $("#person-color").show();
+  selectedColor = null;
+  populatePersonColors();
 }
 
 function hideSpotlightControl() {
@@ -410,28 +430,14 @@ function hideSpotlightControl() {
   $("#spotlight-grid").show();
   $("#save-cue-button").show();
   $("#add-person-button").show();
-  $("#person-color").hide();
   $("#color-picker-card").hide();
   isPickingColor = false;
 }
 
-function openPersonControl() {
-  $("#spotlight-grid").hide();
-  $("#save-cue-button").hide();
-  $("#add-person-button").hide();
-  $("#selected-color-name").html("");
-  $("#person-color").show();
-  selectedColor = null;
-  populatePersonColors();
-}
-
 function hidePersonControl() {
-  if(!isPickingColor) {
-  }
   $("#spotlight-grid").show();
   $("#save-cue-button").show();
   $("#add-person-button").show();
-  $("#color-picker-card").hide();
   $("#person-color").hide();
   isPickingColor = false;
 }
@@ -461,6 +467,7 @@ function setSpotLightColor() {
   hideSpotlightControl();
 }
 
+
 function setPersonColor(personNumber) {
    var peopleColor = findPersonColor(personNumber);
    selectedColor = new THREE.Color(peopleColor["hex"]);
@@ -472,6 +479,7 @@ function setPersonColor(personNumber) {
   }
   hidePersonControl();
 }
+
 
 function updateIntensityLabel(i) {
   $("#intensity" + i).html("(" + parseInt(spotlights[i-1].intensity * 100) + "%)");
@@ -603,12 +611,14 @@ function loadConfiguration(i) {
     }
 
     transformControls.detach();
+
     people = [];
 
     for (var j = 0; j < cueConfiguration.people.length; j++) {
       var currPerson = cueConfiguration.people[j];
       var pos = currPerson.pos;
       putSpecificSphere(new THREE.Color("#" + currPerson.color), pos.x, pos.y, pos.z);
+
     }
 
     render();
@@ -636,6 +646,7 @@ function removePerson(person) {
     //updateOutlineMesh();
   }
 }
+
 
 window.addEventListener( 'mousemove', onMouseMove, false );
 window.addEventListener( 'click', onMouseClick, false );
@@ -681,6 +692,8 @@ window.addEventListener( 'keydown', function ( event ) {
              removePerson(selectedObject);
              render();
               break;
+
+
           }
 
         });
