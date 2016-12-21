@@ -19,6 +19,8 @@ var WIDTH, HEIGHT;
 var canvas;
 var canvasPositon;
 
+var outlineMaterial, outlineMesh;
+
 var selectedObject, selectedObjCol;
 
 var transformControls;
@@ -88,7 +90,7 @@ function setup() {
   var mshBackwall= new THREE.Mesh(geoBackwall, matBackwall);
   mshBackwall.receiveShadow = true;
   mshBackwall.position.set(0, 0, 170);
-  scene.add( mshBackwall );
+  //scene.add( mshBackwall );
   
   var mtlLoader = new THREE.MTLLoader();
   mtlLoader.load("assets/irongate_set.mtl", function( materials ) {
@@ -98,8 +100,9 @@ function setup() {
     objLoader.setMaterials( materials );
     objLoader.load("assets/irongate_set.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI/2,0);
-      object.scale.set(3,3,3);
+      object.rotation.set(0,Math.PI,0);
+      object.scale.set(4,4,4);
+      object.position.set(0, -25, -300);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
         node.castShadow = true;
         node.receiveShadow = true;
@@ -112,16 +115,18 @@ function setup() {
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 400;
- var spotlight_height = 250;
+ var spotlight_spacing = 450;
+ var spotlight_height = 450;
 
  for (var i=0; i < 9; i++) {
-  var spotlight = createSpotlight(0XFFFFFF);
+  var spotlight = createSpotlight(0XFFFFFF, -1 * (i%3*spotlight_spacing - spotlight_spacing), 
+    spotlight_height, 
+    parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3);
 
   spotlight.position.set(
     -1 * (i%3*spotlight_spacing - spotlight_spacing), 
     spotlight_height, 
-    parseInt(i/3) * spotlight_spacing/2 - spotlight_spacing/2);
+    parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3);
 
   spotlights.push(spotlight);
   scene.add(spotlights[i]);
@@ -131,10 +136,10 @@ function setup() {
   scene.add(lightHelpers[i]);
  }
 
-  var ambient = new THREE.AmbientLight(0xeee, 0.8);
+  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.5);
   scene.add(ambient);
 
-  camera.position.set(0, 40, -160);
+  camera.position.set(15, 656, -1099);
 
   // Orbit Control
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -148,16 +153,10 @@ function setup() {
   transformControls.addEventListener( 'change', render );
 
   transformControls.addEventListener('mouseDown', function () {
-    if (selectedObject != null)
-    {
-      orbitControls.enabled = false;
-    }
+    orbitControls.enabled = false;
   });
   transformControls.addEventListener('mouseUp', function () {
-      if (selectedObject != null)
-    { 
-      orbitControls.enabled = true;
-    }
+    orbitControls.enabled = true;
   });
   
 
@@ -218,7 +217,7 @@ function putSphere(color) {
     sphereMaterial);
 
   // add the sphere to the scene
-  sphere.position.set(0, 0, 0);
+  sphere.position.set(0, 61, 0);
   sphere.castShadow = true;
   scene.add(sphere);
   people.push(sphere);
@@ -255,16 +254,16 @@ function putSpecificSphere(color, x, y, z) {
   transformControls.attach( sphere );
   scene.add( transformControls );
   selectedObject = sphere;
-  updateOutlineMesh();
 
   render();
 }
 
-function createSpotlight(color) {
+function createSpotlight(color, x, y, z) {
   var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
-  newObj.angle = 0.63; 
-  newObj.distance = 700;
+  newObj.angle = 0.65;
+  newObj.distance = 600;
+  newObj.target = (x/2, y, z - 300);
   return newObj;
 }
 
@@ -273,13 +272,15 @@ function onMouseMove( event ) {
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
 
-  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
-  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
+  mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
+  mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
   transformControls.update();
 
 }
 
 function onMouseClick( event ) {
+  canvas = renderer.domElement;
+  canvasPosition = $(canvas).position();
   mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
   mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
   if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
@@ -293,9 +294,27 @@ function raycast() {
   var intersects = raycaster.intersectObjects( people );
 
   if (intersects.length > 0) {
-        transformControls.attach(intersects[ 0 ].object);
-        selectedObject = intersects[ 0 ].object;
-      }
+                var distance = intersects[0].distance;;
+        var closestObj = intersects[ 0 ].object;
+
+        for (var i = 1; i < intersects.length; i++)
+        {
+          if (intersects[i].distance < distance)
+          {
+              distance = intersects[i].distance;
+              closestObj = intersects[i].object;
+          }
+        }
+
+        transformControls.attach(closestObj);
+        selectedObject = closestObj;
+  }
+
+  else {
+    transformControls.detach();
+    selectedObject = null;
+  }
+
   render();
 }
 
@@ -314,7 +333,6 @@ function updateOutlineMesh() {
   outlineMesh.position.z = selectedObject.position.z;
   outlineMesh.scale.multiplyScalar(1.1);
   scene.add(outlineMesh);
-  render();
 }
 
 
@@ -322,7 +340,8 @@ function toggleSelectMode() {
   isSelectMode = !isSelectMode;
 }
 
-function render() {
+function render() {  
+  updateOutlineMesh();
   renderer.render(scene, camera);
 }
 
@@ -643,8 +662,8 @@ function removePerson(person) {
       transformControls.detach();
       selectedObject = null;
     }
-    //updateOutlineMesh();
   }
+  render();
 }
 
 
@@ -672,7 +691,7 @@ window.addEventListener( 'keydown', function ( event ) {
              transformControls.setMode( "rotate" );
               break;
 
-            case 82: // R
+            case 82: // Rt
              transformControls.setMode( "scale" );
               break;
 
@@ -693,6 +712,9 @@ window.addEventListener( 'keydown', function ( event ) {
              render();
               break;
 
+            case 86: // V
+             console.log(camera.position);
+            break;
 
           }
 
