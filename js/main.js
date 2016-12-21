@@ -411,7 +411,7 @@ function openSpotlightControl(i) {
   populateFilterColors();
 }
 
-function openPersonControl(i) {
+function openPersonControl() {
   $("#spotlight-grid").hide();
   $("#save-cue-button").hide();
   $("#add-person-button").hide();
