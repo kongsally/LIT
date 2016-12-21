@@ -19,6 +19,8 @@ var WIDTH, HEIGHT;
 var canvas;
 var canvasPositon;
 
+var outlineMaterial, outlineMesh;
+
 var selectedObject, selectedObjCol;
 
 var transformControls;
@@ -90,23 +92,23 @@ function setup() {
   mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
   
-  var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.load("assets/irongate_set.mtl", function( materials ) {
-    materials.preload();
+  // var mtlLoader = new THREE.MTLLoader();
+  // mtlLoader.load("assets/irongate_set.mtl", function( materials ) {
+  //   materials.preload();
     
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setMaterials( materials );
-    objLoader.load("assets/irongate_set.obj", function (object) {
-      object.children[0].geometry.computeBoundingBox();
-      object.rotation.set(0,Math.PI/2,0);
-      object.scale.set(3,3,3);
-      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
-        node.castShadow = true;
-        node.receiveShadow = true;
-      }});
-      scene.add(object);
-    });
-  });
+  //   var objLoader = new THREE.OBJLoader();
+  //   objLoader.setMaterials( materials );
+  //   objLoader.load("assets/irongate_set.obj", function (object) {
+  //     object.children[0].geometry.computeBoundingBox();
+  //     object.rotation.set(0,Math.PI/2,0);
+  //     object.scale.set(3,3,3);
+  //     object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+  //       node.castShadow = true;
+  //       node.receiveShadow = true;
+  //     }});
+  //     scene.add(object);
+  //   });
+  // });
 
 
   // create lights
@@ -148,16 +150,10 @@ function setup() {
   transformControls.addEventListener( 'change', render );
 
   transformControls.addEventListener('mouseDown', function () {
-    if (selectedObject != null)
-    {
-      orbitControls.enabled = false;
-    }
+    orbitControls.enabled = false;
   });
   transformControls.addEventListener('mouseUp', function () {
-      if (selectedObject != null)
-    { 
-      orbitControls.enabled = true;
-    }
+    orbitControls.enabled = true;
   });
   
 
@@ -255,7 +251,6 @@ function putSpecificSphere(color, x, y, z) {
   transformControls.attach( sphere );
   scene.add( transformControls );
   selectedObject = sphere;
-  updateOutlineMesh();
 
   render();
 }
@@ -273,13 +268,15 @@ function onMouseMove( event ) {
   // calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
 
-  mouse.x = ((event.clientX / WIDTH) * 2) - 1;
-  mouse.y = ((event.clientY / HEIGHT) * -2) + 1;
+  mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
+  mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
   transformControls.update();
 
 }
 
 function onMouseClick( event ) {
+  canvas = renderer.domElement;
+  canvasPosition = $(canvas).position();
   mouse.x = (((event.clientX - canvasPosition.left)/ canvas.width) * 2) - 1;
   mouse.y = (- ((event.clientY - canvasPosition.top) / canvas.height) * 2) + 1;
   if (mouse.x >= -1 && mouse.x <= 1 && mouse.y >= -1 && mouse.y <= 1)
@@ -293,9 +290,27 @@ function raycast() {
   var intersects = raycaster.intersectObjects( people );
 
   if (intersects.length > 0) {
-        transformControls.attach(intersects[ 0 ].object);
-        selectedObject = intersects[ 0 ].object;
-      }
+                var distance = intersects[0].distance;;
+        var closestObj = intersects[ 0 ].object;
+
+        for (var i = 1; i < intersects.length; i++)
+        {
+          if (intersects[i].distance < distance)
+          {
+              distance = intersects[i].distance;
+              closestObj = intersects[i].object;
+          }
+        }
+
+        transformControls.attach(closestObj);
+        selectedObject = closestObj;
+  }
+
+  else {
+    transformControls.detach();
+    selectedObject = null;
+  }
+
   render();
 }
 
@@ -314,7 +329,6 @@ function updateOutlineMesh() {
   outlineMesh.position.z = selectedObject.position.z;
   outlineMesh.scale.multiplyScalar(1.1);
   scene.add(outlineMesh);
-  render();
 }
 
 
@@ -322,7 +336,8 @@ function toggleSelectMode() {
   isSelectMode = !isSelectMode;
 }
 
-function render() {
+function render() {  
+  updateOutlineMesh();
   renderer.render(scene, camera);
 }
 
@@ -643,8 +658,8 @@ function removePerson(person) {
       transformControls.detach();
       selectedObject = null;
     }
-    //updateOutlineMesh();
   }
+  render();
 }
 
 
