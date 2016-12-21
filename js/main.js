@@ -72,7 +72,7 @@ function setup() {
   woodTexture.wrapT = THREE.RepeatWrapping;
   woodTexture.repeat.set( 128, 128 );
 
-  var geoFloor = new THREE.BoxGeometry(2000, 1, 2000);
+  var geoFloor = new THREE.BoxGeometry(500, 1, 500);
   var matFloor = new THREE.MeshLambertMaterial({
     color: 0XC0834A,
     map: woodTexture
@@ -100,8 +100,7 @@ function setup() {
     objLoader.load("assets/irongate.obj", function (object) {
       object.children[0].geometry.computeBoundingBox();
       object.rotation.set(0,0,0);
-      object.scale.set(4,4,4);
-      object.position.set(0, -25, 300);
+      object.position.set(0, 0, 75);
       object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
         node.castShadow = true;
         node.receiveShadow = true;
@@ -127,8 +126,8 @@ function setup() {
   // create lights
  spotlights = [];
  lightHelpers = [];
- var spotlight_spacing = 400;
- var spotlight_height = 450;
+ var spotlight_spacing = 100;
+ var spotlight_height = 100;
 
  for (var i=0; i < 9; i++) {
   var spotlight = createSpotlight(0XFFFFFF);
@@ -138,7 +137,6 @@ function setup() {
   var z = parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3;
   
   spotlight.position.set(x, y, z);
-
   //spotlight.target.position.set( - x / 4, 0, - z);
   //scene.add(spotlight.target);
 
@@ -153,7 +151,7 @@ function setup() {
   var ambient = new THREE.AmbientLight(0XFFFFFF, 0.4);
   scene.add(ambient);
 
-  camera.position.set(15, 656, 1099);
+  camera.position.set(0, 50, 180);
 
   // Orbit Control
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -245,17 +243,22 @@ function putSphere(color) {
   objLoader.load("assets/human.obj", function (object) {
     var geom = object.children[0].geometry;
     var sphereMaterial =
-    new THREE.MeshLambertMaterial(
+    new THREE.MeshPhongMaterial(
     {
-      color : color
+      color : color,
+      shininess : 50
     });
 
     var sphere = new THREE.Mesh(
       geom,
       sphereMaterial);
-    sphere.position.set(0, 68, 0);
+    sphere.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+        node.castShadow = true;
+        node.receiveShadow = true;
+    }});
+    sphere.position.set(0, 5, 0);
     sphere.rotation.set(0, 0, 0);
-    sphere.scale.set(3.5, 3.5, 3.5);
+    sphere.scale.set(1, 1, 1);
         people.push(sphere);
         scene.add(sphere);
         transformControls.attach(sphere);
@@ -300,17 +303,22 @@ function putSpecificSphere(color, x, y, z) {
   objLoader.load("assets/human.obj", function (object) {
     var geom = object.children[0].geometry;
     var sphereMaterial =
-    new THREE.MeshLambertMaterial(
+    new THREE.MeshPhongMaterial(
     {
-      color : color
+      color : color,
+      shininess: 50
     });
 
     var sphere = new THREE.Mesh(
       geom,
       sphereMaterial);
+    sphere.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+        node.castShadow = true;
+        node.receiveShadow = true;
+    }});
     sphere.position.set(x, y, z);
     sphere.rotation.set(0, 0, 0);
-    sphere.scale.set(3.5, 3.5, 3.5);
+    sphere.scale.set(1, 1, 1);
         people.push(sphere);
         scene.add(sphere);
         transformControls.attach(sphere);
@@ -323,11 +331,12 @@ function putSpecificSphere(color, x, y, z) {
 function createSpotlight(color) {
   var newObj = new THREE.SpotLight(color, 0);
   newObj.castShadow = true;
-  newObj.angle = 0.50;
-  newObj.distance = 1500;
+  newObj.angle = 0.40;
+  newObj.distance = 400;
   newObj.penumbra = 0.1;
   newObj.decay = 0.2;
-  newObj.target.position.set(0, 0, 0);
+  // newObj.target.position.set(0, 0, 0);
+  // newObj.scale.set(1, 1, 0.4);
   return newObj;
 }
 
