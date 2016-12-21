@@ -90,24 +90,24 @@ function setup() {
   mshBackwall.position.set(0, 0, 170);
   scene.add( mshBackwall );
   
-  // test obj
-  // var mtlLoader = new THREE.MTLLoader();
-  // mtlLoader.load("assets/hamilton_set.mtl", function( materials ) {
-  //   materials.preload();
+  var mtlLoader = new THREE.MTLLoader();
+  mtlLoader.load("assets/irongate_set.mtl", function( materials ) {
+    materials.preload();
     
-  //   var objLoader = new THREE.OBJLoader();
-  //   objLoader.setMaterials( materials );
-  //   objLoader.load("assets/hamilton_set.obj", function (object) {
-  //     object.children[0].geometry.computeBoundingBox();
-  //     object.rotation.set(0,Math.PI/2,0);
-  //     object.scale.set(2,2,2);
-  //     object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
-  //       node.castShadow = true;
-  //       node.receiveShadow = true;
-  //     }});
-  //     scene.add(object);
-  //   });
-  // });
+    var objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials( materials );
+    objLoader.load("assets/irongate_set.obj", function (object) {
+      object.children[0].geometry.computeBoundingBox();
+      object.rotation.set(0,Math.PI/2,0);
+      object.scale.set(3,3,3);
+      object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
+        node.castShadow = true;
+        node.receiveShadow = true;
+      }});
+      scene.add(object);
+    });
+  });
+
 
   // create lights
  spotlights = [];
