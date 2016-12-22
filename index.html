@@ -19,42 +19,33 @@
   <script src="./js/StereoEffect.js"></script>
   <script src="./js/DeviceOrientationControls.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>LIT</title>
+	<title>Theatre Assist Tool</title>
 </head>
 
 <body onload="setup();">
   <div class="demo-layout-transparent mdl-layout mdl-js-layout">
     <header class="mdl-layout__header mdl-layout__header--transparent">
      <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lit</span>
+      <span class="mdl-layout-title">Theatre Assist Tool</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation">
-        <a id='vr-link' class="mdl-button mdl-js-button mdl-js-ripple-effect" onClick="window.location.href = 'vr.html';">VR Mode</a>
+        <a id="save-photo-button" onclick="downloadImage();" 
+              class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                 <i class='material-icons archive'>get_app</i> Scene Image
+        </a>
+        <a id='vr-link' class="mdl-button mdl-js-button mdl-js-ripple-effect" onClick="window.location.href = 'vr.html';"> VR Mode</a>
       </nav>
       </div>
     </header>
-  
     <div id="spinner-wrapper">
       <div class="mdl-spinner mdl-js-spinner is-active"></div>
     </div>
-
-     <main class="mdl-layout__content">
+    <div id="lightSimContainer"></div>
+   
       <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--6-col">
-         <div>
-         <button id="save-photo-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" onclick="downloadImage();" >
-                  Download Photo
-          </button>
-          </div>
-          <div id="lightSimContainer"></div>
-        </div>
-        <div class="mdl-cell mdl-cell--6-col demo-card-square mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title">
-            <h4 class="mdl-card__title-text">Spotlight Controls</h4>
-          </div>
-          <div class="mdl-grid">
-            <div id="spotlight-grid" class="mdl-cell mdl-cell--12-col">
-              <div id="switch-wrapper">
+        <div id ="edit-tool" class="mdl-cell mdl-cell--3-col demo-card-square mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title" id="spotlight-title">
+            <div id="switch-wrapper">
                   <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" 
                           for="guideline-switch">
                     <input type="checkbox" id="guideline-switch" class="mdl-switch__input"
@@ -64,34 +55,48 @@
                     </span>
                   </label>
                 </div>
+          </div>
+          <div class="mdl-grid">
+            <div id="spotlight-grid" class="mdl-cell mdl-cell--12-col">
+              
               <table>
-                <tr>
-                  <td id="spotlight7"></td>
-                  <td id="spotlight8"></td>
-                  <td id="spotlight9"></td>
-                </tr>
-                <tr>
-                  <td id="spotlight4"></td>
-                  <td id="spotlight5"></td>
-                  <td id="spotlight6"></td>
-                </tr>
                 <tr>
                   <td id="spotlight1"></td>
                   <td id="spotlight2"></td>
                   <td id="spotlight3"></td>
+                  </tr>
+                  <tr>
+                  <td id="spotlight4"></td>
+                  <td id="spotlight5"></td>
+                  <td id="spotlight6"></td>
+                  </tr>
+                  <tr>
+                  <td id="spotlight7"></td>
+                  <td id="spotlight8"></td>
+                  <td id="spotlight9"></td>
                 </tr>
               </table>
             </div>
             <div class="mdl-card__actions mdl-card--border">
-              
+              <div class = "button-wrapper">
               <a id="add-person-button" onClick="openPersonControl();"
-                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
+                class="mdl-button mdl-js-button mdl-button--raised" >
                   Add Person
               </a>
               <a id="save-cue-button" onClick="saveCue();"
-                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" >
+                class="mdl-button mdl-js-button mdl-button--raised" >
                   Save Cue
               </a>
+              </div>
+              <div class = "button-wrapper">
+              <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick='switchAudiencePers();'>
+                Audience View
+              </a>
+              <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick='switchActorPers();'>
+                Actor View
+              </a>
+              </div>
+
             </div>
 
             <div id="color-picker-card" class="mdl-cell mdl-cell--12-col">
@@ -114,9 +119,9 @@
             <div id="person-color" class="mdl-cell mdl-cell--12-col">
               <div class="demo-card-wide mdl-card mdl-shadow--4dp">
                 <div class="mdl-card__title mdl-card--expand">
-                  <h4 class="mdl-card__title-text">
+                  <h6 class="mdl-card__title-text">
                     Pick Color : <span id='selected-color-name'></span>
-                  </h4>
+                  </h6>
                 </div>
                 <div id="color-person-wrapper" class="mdl-card__supporting-text">
                 
@@ -127,37 +132,18 @@
               </div>
             </div>
           </div>
-          <div class="mdl-card__title">
-            <h4 class="mdl-card__title-text">Camera Perspectives</h4>
-          </div>
-          <div class="mdl-grid">
-            <div class="mdl-layout-spacer"></div>
-          <div>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick='switchAudiencePers();'>
-          Audience
-          </button>
-        </div>
-        <div class="mdl-layout-spacer"></div>
-        <div>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick='switchActorPers();'>
-          Actor
-          </button>
-          </div>
-          <div class="mdl-layout-spacer"></div>
-        </div>
-        <div class="mdl-layout-spacer" style="height: 15px;"></div>
-        </div>
       </div>
 
       <section id="cue-wrapper" class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-        <header class="mdl-cell mdl-cell--2-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100">
+      <header class="mdl-cell mdl-cell--2-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100">
           <h4>Saved Cues</h4>
         </header>
         <div id="saved-cues-wrapper" class="mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
         </div>
       </section>
-    </main>
+    
   </div>
+  
 </body>
 
 </html>

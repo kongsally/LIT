@@ -37,8 +37,8 @@ function setup() {
 
   container = $('#lightSimContainer');
 
-  WIDTH = container.width();
-  HEIGHT = window.innerHeight * 0.6;
+  WIDTH = window.innerWidth;
+  HEIGHT = window.innerHeight;
 
   $("#color-swatch-wrapper").css("height", HEIGHT + "px");
    $("#color-person-wrapper").css("height", HEIGHT + "px");
@@ -52,10 +52,11 @@ function setup() {
   // create a WebGL renderer, camera
   // and a scene
   renderer = new THREE.WebGLRenderer({
-    preserveDrawingBuffer: true
+    preserveDrawingBuffer: true,
+    alpha: true
   });
   renderer.domElement.setAttribute("id", "canvas");
-  renderer.clearColor(0xEEEEEE);
+  renderer.clearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
 
   camera = new THREE.PerspectiveCamera(
@@ -78,7 +79,7 @@ function setup() {
   woodTexture.wrapT = THREE.RepeatWrapping;
   woodTexture.repeat.set( 128, 128 );
 
-  var geoFloor = new THREE.BoxGeometry(500, 1, 500);
+  var geoFloor = new THREE.BoxGeometry(1000, 1, 1000);
   var matFloor = new THREE.MeshLambertMaterial({
     color: 0XC0834A,
     map: woodTexture
@@ -115,20 +116,6 @@ function setup() {
     });
   });
 
-  // var objLoader = new THREE.OBJLoader();
-  //   objLoader.load("assets/human.obj", function (object) {
-  //     object.children[0].geometry.computeBoundingBox();
-  //     object.rotation.set(0,Math.PI,0);
-  //     object.scale.set(3.5,3.5,3.5);
-  //     object.position.set(0, 63.5, 0);
-  //     object.traverse( function( node ) { if ( node instanceof THREE.Mesh ) { 
-  //       node.castShadow = true;
-  //       node.receiveShadow = true;
-  //     }});
-  //     people.push(object)
-  //     scene.add(object);
-  //   });
-
   // create lights
  spotlights = [];
  lightHelpers = [];
@@ -143,8 +130,6 @@ function setup() {
   var z = parseInt(i/3) * spotlight_spacing/3 - spotlight_spacing/3;
   
   spotlight.position.set(x, y, z);
-  //spotlight.target.position.set( - x / 4, 0, - z);
-  //scene.add(spotlight.target);
 
   spotlights.push(spotlight);
   scene.add(spotlights[i]);
@@ -154,29 +139,39 @@ function setup() {
   scene.add(lightHelpers[i]);
  }
 
- // hemiStage = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.4);
- //  hemiStage.position.set(0, -200, 400);
- // scene.add(hemiStage);
+ hemiStage = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
+  hemiStage.position.set(0, -200, 400);
+ scene.add(hemiStage);
 
- // stageHelper = new THREE.HemisphereLightHelper(hemiStage, 700);
- // //scene.add(stageHelper);
+ hemiStairs = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
+ hemiStairs.position.set(0, -500, 0);
+ scene.add(hemiStairs);
 
- // hemiStairs = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.2);
- // hemiStairs.position.set(0, -500, 0);
- // scene.add(hemiStairs);
+ dirLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
+  dirLight.color.setHSL( 0.1, 1, 0.95 );
+  dirLight.position.set( -1, 1.75, 1 );
+  dirLight.position.multiplyScalar( 50 );
+  scene.add( dirLight );
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 2048;
+  dirLight.shadow.mapSize.height = 2048;
+  var d = 50;
+  dirLight.shadow.camera.left = -d;
+  dirLight.shadow.camera.right = d;
+  dirLight.shadow.camera.top = d;
+  dirLight.shadow.camera.bottom = -d;
+  dirLight.shadow.camera.far = 3500;
+  dirLight.shadow.bias = -0.0001;
 
- // stairHelper = new THREE.HemisphereLightHelper(hemiStairs, 700);
- // //scene.add(stairHelper);
-
-  var ambient = new THREE.AmbientLight(0XFFFFFF, 0.8);
-  scene.add(ambient);
+  // var ambient = new THREE.AmbientLight(0XFFFFFF, 0.8);
+  // scene.add(ambient);
 
   camera.position.set(0, 50, 180);
 
   // Orbit Control
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
   orbitControls.addEventListener('change', render, false);
-  orbitControls.maxDistance = 2000;
+  orbitControls.maxDistance = 300;
   orbitControls.maxPolarAngle = Math.PI/2; 
 
   orbitControls.target.set(0, 40, 0);
@@ -192,8 +187,8 @@ function setup() {
   });
   
 
-
   renderer.setSize(WIDTH, HEIGHT);
+  switchAudiencePers();
   container.append(renderer.domElement);
 
    $.getJSON("PEOPLE.json", function( data ) { 
@@ -238,40 +233,13 @@ function switchAudiencePers()
 
 function switchActorPers()
 {
-  camera.position.set(0, 10, -20);
+  camera.position.set(0, 40, -30);
   camera.lookAt(new THREE.Vector3( 0, 20, 200));
   camera.updateProjectionMatrix();
   render();
 }
 
 function putSphere(color) {
-  /*var radius = 16,
-      segments = 16,
-      rings = 16;
-
-  // create the sphere's material
-  var sphereMaterial =
-    new THREE.MeshLambertMaterial(
-      {
-        color : color
-      });
-
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(
-      radius,
-      segments,
-      rings),
-    sphereMaterial);
-
-  // add the sphere to the scene
-  sphere.position.set(0, 61, 0);
-  sphere.castShadow = true;
-  scene.add(sphere);
-  people.push(sphere);
-  transformControls.attach( sphere );
-  scene.add( transformControls );
-  selectedObject = sphere; */
-
   var objLoader = new THREE.OBJLoader();
   var geom;
   objLoader.load("assets/human.obj", function (object) {
@@ -303,35 +271,6 @@ function putSphere(color) {
 }
 
 function putSpecificSphere(color, x, y, z) {
-  // var radius = 16,
-  //     segments = 16,
-  //     rings = 16;
-
-  // // create the sphere's material
-  // var sphereMaterial =
-  //   new THREE.MeshLambertMaterial(
-  //     {
-  //       color : color
-  //     });
-
-  // var sphere = new THREE.Mesh(
-  //   new THREE.SphereGeometry(
-  //     radius,
-  //     segments,
-  //     rings),
-  //   sphereMaterial);
-
-  // // add the sphere to the scene
-  // sphere.position.set(x, y, z);
-  // sphere.castShadow = true;
-  // scene.add(sphere);
-  // people.push(sphere);
-  // transformControls.attach( sphere );
-  // scene.add( transformControls );
-  // selectedObject = sphere;
-
-  // render();
-
   var objLoader = new THREE.OBJLoader();
   var geom;
   objLoader.load("assets/human.obj", function (object) {
@@ -467,8 +406,8 @@ function render() {
 }
 
 function onResize() {
-  var WIDTH = container.width(),
-      HEIGHT =  window.innerHeight * 0.6;
+  var WIDTH = window.innerWidth,
+      HEIGHT =  window.innerHeight;
   $("#color-swatch-wrapper").css("height", parseInt(HEIGHT)+ "px");
   $("#color-person-wrapper").css("height", parseInt(HEIGHT)+ "px");
   camera.aspect = WIDTH/HEIGHT;
