@@ -15,6 +15,12 @@ body {
 	color: #fff;
 }
 
+#save-photo-button {
+	background-color: rgb(83,109,254);
+	color: #fff;
+	margin-right: 1em;
+}
+
 #spinner-wrapper {
 	padding-top: 20%;
 	text-align: center;
@@ -37,6 +43,7 @@ td {
 	color: #222;
 	padding: 10px 2px;
 	text-align: center;
+	font-size: 0.8em;
 }
 
 .palette {
@@ -82,6 +89,13 @@ i:hover {
 	text-align: center;
 }
 
+#color-person-wrapper {
+	background-color: #000;
+	height: 150px !important;
+	overflow-y: scroll;
+	text-align: center;
+}
+
 .mdl-card__actions.mdl-card--border {
 	text-align: right;
 }
@@ -97,12 +111,12 @@ main {
 	visibility: hidden;
 }
 
-#switch-wrapper {
-	margin-bottom: 1em;
-}
-
 #cue-wrapper {
-	height: 8%;
+	position: fixed;
+	width: 100%;
+	left: 0;
+	bottom: 0;
+	height: 10%;
 	vertical-align: middle;
 }
 
@@ -113,6 +127,8 @@ main {
 #cue-wrapper header h4{
 	text-align: center;
 	vertical-align: middle;
+	z-index: 100;
+	/*font-size: 0.8em;*/
 }
 
 #saved-cues-wrapper {
@@ -129,7 +145,25 @@ main {
 	vertical-align: middle;
 }
 
-#save-photo-button {
-	background-color: #fff;
-	margin-bottom: 1em;
+canvas {
+	position: fixed;
+}
+
+#spotlight-title {
+	padding-bottom: 0;
+}
+
+.mdl-card__title-text {
+	font-size: 0.8em;
+}
+
+#edit-tool {
+	position: fixed;
+	top: 10%;
+	left: 1%;
+}
+
+.button-wrapper {
+	text-align: center;
+	margin-top: 0.5em;
 }

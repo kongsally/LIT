@@ -154,7 +154,7 @@ function putSphere(pos) {
   var sphereMaterial =
     new THREE.MeshLambertMaterial(
       {
-        color: 0xEEEEEE
+        color: 0xFF3333
       });
 
   var sphere = new THREE.Mesh(

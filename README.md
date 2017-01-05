@@ -1,5 +1,5 @@
 ## [Lit](https://kongsally.github.io/LIT/) : A virtual lighting lab to design and preview stagelights
-![](Lit_Demo.gif)
+![](Sample_Shot.png)
 
 ###Inspiration
 Lighting sets an appropriate atmosphere and heightens an audience's understanding of a theatrical performance. However, rehearsing and experimenting with lighting is costly and time consuming. That is why we made a virtual lighting lab that is more accessible and fun to play with! :)
